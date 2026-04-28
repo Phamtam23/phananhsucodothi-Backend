@@ -5,11 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import jakarta.validation.constraints.Size;
 
-/**
- * QuyenTruyCap - Quyền truy cập hệ thống
- * Bảng: QUYENTRUYCAP
- * PK: maQuyen VARCHAR(10)
- */
 @Entity
 @Table(name = "QUYENTRUYCAP")
 @Getter
