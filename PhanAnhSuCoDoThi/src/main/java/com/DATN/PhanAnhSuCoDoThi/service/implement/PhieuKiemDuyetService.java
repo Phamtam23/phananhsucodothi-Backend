@@ -6,10 +6,9 @@ import com.DATN.PhanAnhSuCoDoThi.entity.PhieuKiemDuyetEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuKiemDuyetMapper;
 import com.DATN.PhanAnhSuCoDoThi.respository.PhieuKiemDuyetRepository;
-import com.DATN.PhanAnhSuCoDoThi.respository.SucoRespository;
+import com.DATN.PhanAnhSuCoDoThi.respository.SucoRepository;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuKiemDuyetService;
-import com.DATN.PhanAnhSuCoDoThi.service.ISucoService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,14 +18,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PhieuKiemDuyetService implements IPhieuKiemDuyetService {
-    private final SucoRespository sucoRespository;
+    private final SucoRepository sucoRepository;
     private final PhieuKiemDuyetRepository phieuKiemDuyetRepository;
     private final PhieuKiemDuyetMapper phieuKiemDuyetMapper;
 
     @Override
     public PhieuKiemDuyetResponse create(CreatePhieuKiemDuyetRequest request) {
 
-        SucoEntity suCo = sucoRespository.findById(request.getMaSuCo())
+        SucoEntity suCo = sucoRepository.findById(request.getMaSuCo())
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sự cố"));
 
         String refMa = SecurityUtils.getCurrentRefMa();

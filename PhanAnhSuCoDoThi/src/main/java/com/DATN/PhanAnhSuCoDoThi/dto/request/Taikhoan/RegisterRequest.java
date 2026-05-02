@@ -1,4 +1,4 @@
-package com.DATN.PhanAnhSuCoDoThi.dto.request;
+package com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor

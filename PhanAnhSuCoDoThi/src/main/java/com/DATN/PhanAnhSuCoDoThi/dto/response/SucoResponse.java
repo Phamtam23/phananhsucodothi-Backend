@@ -16,6 +16,7 @@ public class SucoResponse {
     private String maNguoiDan;
 
     private Double kinhDo;
+
     private Double viDo;
 
     private String diaDiem;
@@ -30,5 +31,7 @@ public class SucoResponse {
 
     // media
     private List<MediaResponse> medias;
+
+    private List<PhieuPhanCongSCRespomse>  phieuPhanCongs;
 
 }

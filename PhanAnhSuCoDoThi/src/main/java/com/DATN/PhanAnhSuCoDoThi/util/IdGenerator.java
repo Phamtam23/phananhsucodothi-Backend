@@ -9,13 +9,19 @@ public class IdGenerator {
 
     public static String generateMaSuCo(String maNguoiDan) {
 
-        // lấy 4 ký tự cuối của mã người dân
-        String last4 = getLast4(maNguoiDan);
+        String prefix = "SC";
 
-        // random 4 ký tự
-        String random4 = generateRandom(4);
+        String last2 = (maNguoiDan != null && maNguoiDan.length() >= 2)
+                ? maNguoiDan.substring(maNguoiDan.length() - 2)
+                : "00";
 
-        return "SC" + last4 + random4;
+        String timePart = String.format("%04d",
+                System.currentTimeMillis() % 10000
+        );
+
+        String randomPart = generateRandom(2);
+
+        return prefix + last2 + timePart + randomPart;
     }
 
     private static String getLast4(String input) {
@@ -52,5 +58,14 @@ public class IdGenerator {
         String maTaiKhoan = "TK" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
          return  maTaiKhoan;
     }
+
+
+    public static String generateMaTep() {
+        return "TEP" + UUID.randomUUID().toString()
+                .replace("-", "")
+                .substring(0, 7)
+                .toUpperCase();
+    }
+
 
 }

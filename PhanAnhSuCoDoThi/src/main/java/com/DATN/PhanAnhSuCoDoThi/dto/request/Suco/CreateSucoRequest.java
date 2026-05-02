@@ -15,15 +15,12 @@ import java.util.List;
 @Builder
 public class CreateSucoRequest {
     @NotNull
-    private String maNguoiDan;
-    @NotBlank
     private Double kinhDo;
-    @NotBlank
+    @NotNull
     private Double viDo;
     @NotBlank
     private String diaDiem;
     @NotBlank
     private String noiDung;
-    @NotBlank
     private List<String> mediaUrls;
 }

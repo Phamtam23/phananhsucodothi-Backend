@@ -1,13 +1,13 @@
 package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
-import com.DATN.PhanAnhSuCoDoThi.dto.request.LoginRequest;
-import com.DATN.PhanAnhSuCoDoThi.dto.request.RegisterRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.LoginRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.RegisterRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.AuthResponse;
+import com.DATN.PhanAnhSuCoDoThi.entity.NguoidanEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.QuyenTruyCapEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.TaikhoanEntity;
 import com.DATN.PhanAnhSuCoDoThi.mapper.AuthMapper;
-import com.DATN.PhanAnhSuCoDoThi.respository.QuyenTruyCapRepository;
-import com.DATN.PhanAnhSuCoDoThi.respository.TaikhoanRepository;
+import com.DATN.PhanAnhSuCoDoThi.respository.*;
 import com.DATN.PhanAnhSuCoDoThi.security.JwtUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IAuthService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
@@ -20,12 +20,15 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class AuthServiceImpl implements IAuthService {
+public class AuthService implements IAuthService {
     private final TaikhoanRepository taikhoanRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final QuyenTruyCapRepository quyenTruyCapRepository;
     private final AuthMapper authMapper;
+    private final NguoidanRepository nguoidanRepository;
+    private final NhanVienDieuPhoiRepository nhanVienDieuPhoiRepository;
+    private final NhanVienDonViRepository nhanVienDonViRepository;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
@@ -57,6 +60,13 @@ public class AuthServiceImpl implements IAuthService {
 
         List<String> quyens = List.of();
 
+        NguoidanEntity nguoidan = new NguoidanEntity();
+        nguoidan.setDiemUyTin(100);
+        nguoidan.setTaiKhoan(taikhoan);
+        nguoidan.setMaNguoiDan(maTaiKhoan);
+
+        nguoidanRepository.save(nguoidan);
+
         String token = jwtUtils.generateToken(
                 taikhoan.getEmail(),
                 taikhoan.getMaTaiKhoan(),
@@ -84,11 +94,47 @@ public class AuthServiceImpl implements IAuthService {
                         .map(q -> q.getMaQuyen())
                         .toList();
 
+        String refMa = null;
+        String role = null;
+
+        if (!quyens.isEmpty()) {
+            role = quyens.get(0);
+        }
+
+        switch (role) {
+            case "R_USER":
+                refMa = nguoidanRepository
+                        .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy người dân"))
+                        .getMaNguoiDan();
+                break;
+
+            case "R_DIEUPHOI":
+                refMa = nhanVienDieuPhoiRepository
+                        .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy NV điều phối"))
+                        .getMaNhanVienDieuPhoi();
+                break;
+
+            case "R_NVXULY":
+                refMa = nhanVienDonViRepository
+                        .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy NV xử lý"))
+                        .getMaNhanVien();
+                break;
+
+            case "R_Admin":
+                refMa = null;
+
+            default:
+                throw new RuntimeException("Role không hợp lệ");
+        }
+
         String token = jwtUtils.generateToken(
                 taikhoan.getEmail(),
                 taikhoan.getMaTaiKhoan(),
                 quyens,
-                null
+                refMa
         );
 
         return authMapper.toResponse(taikhoan, token);

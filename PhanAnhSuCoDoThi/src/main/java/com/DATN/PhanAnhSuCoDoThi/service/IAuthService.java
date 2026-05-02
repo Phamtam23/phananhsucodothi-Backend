@@ -1,7 +1,7 @@
 package com.DATN.PhanAnhSuCoDoThi.service;
 
-import com.DATN.PhanAnhSuCoDoThi.dto.request.LoginRequest;
-import com.DATN.PhanAnhSuCoDoThi.dto.request.RegisterRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.LoginRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.RegisterRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.AuthResponse;
 
 public interface IAuthService {

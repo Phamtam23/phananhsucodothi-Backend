@@ -37,9 +37,6 @@ public class FileStorageService {
     public String saveFile(MultipartFile file, String type) {
         validateFile(file);
         try {
-            // uploads/suco/images/abc.jpg
-            // uploads/ket-qua/images/abc.jpg
-            // uploads/minh-chung/videos/abc.mp4
             String subFolder = type + "/" + (isImage(file) ? "images" : "videos");
             Path uploadPath = Paths.get(uploadDir, subFolder);
             if (!Files.exists(uploadPath)) {
@@ -50,6 +47,9 @@ public class FileStorageService {
             String newFileName = UUID.randomUUID() + "." + extension;
             Path filePath = uploadPath.resolve(newFileName);
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+            // ← Thêm dòng này để xem đường dẫn thật
+            System.out.println("File saved at: " + filePath.toAbsolutePath());
 
             return "/" + uploadDir + "/" + subFolder + "/" + newFileName;
 

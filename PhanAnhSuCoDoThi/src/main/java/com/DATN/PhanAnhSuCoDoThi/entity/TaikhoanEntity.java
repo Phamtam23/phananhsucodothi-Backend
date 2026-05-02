@@ -63,4 +63,6 @@ public class TaikhoanEntity {
             inverseJoinColumns = @JoinColumn(name = "maQuyen")
     )
     private Set<QuyenTruyCapEntity> quyens;
+    @OneToOne(mappedBy = "taiKhoan", fetch = FetchType.LAZY)
+    private NguoidanEntity nguoiDan;
 }

@@ -1,4 +1,4 @@
-package com.DATN.PhanAnhSuCoDoThi.dto.request;
+package com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
