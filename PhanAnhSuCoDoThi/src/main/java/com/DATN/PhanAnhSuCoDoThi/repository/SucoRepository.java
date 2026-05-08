@@ -1,4 +1,4 @@
-package com.DATN.PhanAnhSuCoDoThi.respository;
+package com.DATN.PhanAnhSuCoDoThi.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -6,8 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
-
-import java.util.List;
 
 
 @Repository

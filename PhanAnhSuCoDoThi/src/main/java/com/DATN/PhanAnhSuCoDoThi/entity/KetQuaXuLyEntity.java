@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.entity;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiKetQua;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -7,12 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * KetQuaXuLy - Kết quả xử lý sự cố do nhân viên đơn vị nộp
- * Bảng: KETQUAXULY
- * PK: maKetQua VARCHAR(10)
- * FK: chiTietPhanCong → CHITIETPHANCONG
- */
 @Entity
 @Table(name = "KETQUAXULY")
 @Getter
@@ -30,9 +25,9 @@ public class KetQuaXuLyEntity {
     @Column(name = "thoiGianNop")
     private LocalDateTime thoiGianNop;
 
-    @Size(max = 20)
+    @Enumerated(EnumType.STRING)
     @Column(name = "trangThai", length = 20)
-    private String trangThai;
+    private TrangThaiKetQua trangThai;
 
     @Column(name = "noiDungThucHien", columnDefinition = "TEXT")
     private String noiDungThucHien;

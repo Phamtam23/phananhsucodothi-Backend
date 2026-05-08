@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.entity;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -32,9 +33,9 @@ public class ChiTietPhanCongEntity {
     @JoinColumn(name = "maNhanVienXuLy")
     private NhanVienDonViEntity nhanVienXuLy;
 
-    @Size(max = 20)
+    @Enumerated(EnumType.STRING)
     @Column(name = "trangThai", length = 20)
-    private String trangThai;
+    private TrangThaiChiTietPhanCong trangThai;
 
     @Column(name = "thoiGianTao")
     private LocalDateTime thoiGianTao;

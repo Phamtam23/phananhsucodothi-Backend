@@ -1,4 +1,4 @@
-package com.DATN.PhanAnhSuCoDoThi.respository;
+package com.DATN.PhanAnhSuCoDoThi.repository;
 
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuKiemDuyetEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

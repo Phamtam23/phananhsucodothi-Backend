@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import lombok.Builder;
 import lombok.Data;
 
@@ -23,7 +24,7 @@ public class SucoResponse {
 
     private String noiDung;
 
-    private String trangThai;
+    private TrangThaiPhanCong trangThai;
 
     private LocalDate ngayDuKienHoanThanh;
 

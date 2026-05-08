@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response;
 
+import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,7 @@ import java.time.LocalDateTime;
 public class PhieuPhanCongResponse {
     private String maPhieuPhanCong;
 
-    private SucoResponse suCo;
+    private SucoDetailResponse suCo;
 
     private DonViXuLyResponse donViXuLy;
 

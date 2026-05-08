@@ -5,14 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-/**
- * PhieuChiDao - Phiếu chỉ đạo từ trưởng đơn vị cho nhân viên xử lý
- * Bảng: PHIEUCHIDAO
- * PK: maChiDao VARCHAR(10)
- * FK: chiTietPhanCong → CHITIETPHANCONG
- * FK: truongDonVi     → NHANVIEN_DONVI (trưởng đơn vị ký chỉ đạo)
- */
 @Entity
 @Table(name = "PHIEUCHIDAO")
 @Getter
@@ -36,4 +30,7 @@ public class PhieuChiDaoEntity {
 
     @Column(name = "ngayChiDao")
     private LocalDate ngayChiDao;
+
+    @Column(name ="DeleteAt")
+    private LocalDateTime DeleteAt;
 }

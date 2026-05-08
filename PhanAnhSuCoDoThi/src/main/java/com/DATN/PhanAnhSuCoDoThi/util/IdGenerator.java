@@ -67,5 +67,24 @@ public class IdGenerator {
                 .toUpperCase();
     }
 
+    public static String generateMaPhieuPhanCong(String maSuCo, String maDonVi) {
+        return  "PC" + getLast4(maSuCo) + getLast4(maDonVi);
+    }
 
+    public static String geMaChiTietPhanCong(String maPhieuPhanCong, String maTruongDonVi)
+    {
+        return getLast4(maTruongDonVi) + getLast4(maPhieuPhanCong) + generateRandom(2);
+    }
+
+    public static String generateMaChiDao(String maPhieuPhanCong)
+    {
+        return getLast4(maPhieuPhanCong) + generateRandom(6);
+    }
+
+    public static String generateMaKetQuaXuLy(String maChiTietPhanCong)
+    {
+        return "KQ"
+                + getLast4(maChiTietPhanCong)
+                + generateRandom(4);
+    }
 }

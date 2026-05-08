@@ -5,11 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * DonViXuLy - Đơn vị xử lý sự cố
- * Bảng: DONVIXULY
- * PK: maDonViXuLy VARCHAR(10)
- */
 @Entity
 @Table(name = "DONVIXULY")
 @Getter

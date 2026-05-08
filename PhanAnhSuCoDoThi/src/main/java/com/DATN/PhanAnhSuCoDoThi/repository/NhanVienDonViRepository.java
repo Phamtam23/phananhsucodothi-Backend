@@ -1,4 +1,4 @@
-package com.DATN.PhanAnhSuCoDoThi.respository;
+package com.DATN.PhanAnhSuCoDoThi.repository;
 
 import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDonViEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

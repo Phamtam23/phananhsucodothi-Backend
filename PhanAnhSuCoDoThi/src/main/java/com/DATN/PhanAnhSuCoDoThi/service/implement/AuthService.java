@@ -7,7 +7,7 @@ import com.DATN.PhanAnhSuCoDoThi.entity.NguoidanEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.QuyenTruyCapEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.TaikhoanEntity;
 import com.DATN.PhanAnhSuCoDoThi.mapper.AuthMapper;
-import com.DATN.PhanAnhSuCoDoThi.respository.*;
+import com.DATN.PhanAnhSuCoDoThi.repository.*;
 import com.DATN.PhanAnhSuCoDoThi.security.JwtUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IAuthService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;

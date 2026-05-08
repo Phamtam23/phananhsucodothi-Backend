@@ -8,5 +8,5 @@ import lombok.Data;
 public class MediaResponse {
     private String url;
 
-    private String type; // IMAGE / VIDEO
+    private String loai; // IMAGE / VIDEO
 }

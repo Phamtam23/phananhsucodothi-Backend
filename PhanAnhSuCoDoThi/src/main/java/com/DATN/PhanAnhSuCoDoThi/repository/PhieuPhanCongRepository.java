@@ -1,6 +1,8 @@
-package com.DATN.PhanAnhSuCoDoThi.respository;
+package com.DATN.PhanAnhSuCoDoThi.repository;
 
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +17,7 @@ public interface PhieuPhanCongRepository extends JpaRepository<PhieuPhanCongEnti
     @Override
     Optional<PhieuPhanCongEntity> findById(String s);
 
-    List<PhieuPhanCongEntity> findAllByDonViXuLy_MaDonViXuLy(String maDonViXuLy);
+    Page<PhieuPhanCongEntity> findAllByDonViXuLy_MaDonViXuLy(String maDonViXuLy, Pageable pageable);
 
 }
 

@@ -7,13 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * PhieuDanhGia - Phiếu đánh giá kết quả xử lý sự cố do người dân thực hiện
- * Bảng: PHIEUDANHGIA
- * PK: maDanhGia VARCHAR(10)
- * FK: ketQua   → KETQUAXULY
- * FK: nguoiDan → NGUOIDAN
- */
 @Entity
 @Table(name = "PHIEUDANHGIA")
 @Getter

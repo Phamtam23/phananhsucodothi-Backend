@@ -5,11 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * ChucVu - Chức vụ của nhân viên trong đơn vị
- * Bảng: CHUCVU
- * PK: maChucVu VARCHAR(10)
- */
 @Entity
 @Table(name = "CHUCVU")
 @Getter

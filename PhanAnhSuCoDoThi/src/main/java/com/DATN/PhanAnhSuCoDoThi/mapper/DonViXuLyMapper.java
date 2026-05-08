@@ -1,9 +1,7 @@
 package com.DATN.PhanAnhSuCoDoThi.mapper;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.response.DonViXuLyResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.SucoResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.DonViXuLyEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
 import org.springframework.stereotype.Component;
 
 @Component
