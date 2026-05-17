@@ -87,4 +87,24 @@ public class IdGenerator {
                 + getLast4(maChiTietPhanCong)
                 + generateRandom(4);
     }
+
+    public static String generateMaPhieuDanhGia(String maKetQuaXuLy)
+    {
+        return "DG"
+                + getLast4(maKetQuaXuLy)
+                + generateRandom(4);
+    }
+
+    public static String generateMaPhieuMoLai(String maKetQuaXuLy)
+    {
+        return "ML"
+                + getLast4(maKetQuaXuLy)
+                + generateRandom(4);
+    }
+
+    public static String generateMaDonViSuCo()
+    {
+        return "DV"
+                + generateRandom(8);
+    }
 }

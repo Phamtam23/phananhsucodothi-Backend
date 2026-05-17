@@ -1,56 +1,20 @@
 package com.DATN.PhanAnhSuCoDoThi.mapper;
 
+import com.DATN.PhanAnhSuCoDoThi.dto.response.DonViXuLySCResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLyDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCRespomse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoSummaryResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuTrangThaiResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.TepSuCoEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class PhieuPhanCongMapper {
 
-    private final NhanVienMapper nhanVienMapper;
-    private final SucoMapper sucoMapper;
-    private final DonViXuLyMapper donViXuLyMapper;
-    private final MediaMapper mediaMapper;
-
-    public PhieuPhanCongSCRespomse toSummary(
-            PhieuPhanCongEntity e,
-            List<TepSuCoEntity> medias
-    ) {
-        if (e == null) return null;
-
-        return PhieuPhanCongSCRespomse.builder()
-                .maPhieuPhanCong(e.getMaPhieuPhanCong())
-                .trangThai(e.getTrangThai())
-                .thoiGianTao(e.getThoiGianTao())
-
-                .nhanVienDieuPhoi(
-                        nhanVienMapper.toResponseNhanVienDieuPhoi(e.getNhanVienDieuPhoi())
-                )
-
-                .donViXuLy(
-                        donViXuLyMapper.toResponse(e.getDonViXuLy())
-                )
-                .suCo(
-                        sucoMapper.toSummary(
-                                e.getSuCo(),
-                                medias
-                        )
-                )
-                .build();
-    }
-
-    public PhieuPhanCongResponse toDetail(
-            PhieuPhanCongEntity e,
-            List<TepSuCoEntity> medias
+    public PhieuPhanCongResponse toResponse(
+            PhieuPhanCongEntity e
     ) {
         if (e == null) return null;
 
@@ -61,38 +25,53 @@ public class PhieuPhanCongMapper {
                 .lyDoTuChoi(e.getLyDoTuChoi())
                 .thoiGianTao(e.getThoiGianTao())
 
-                .nhanVienDieuPhoi(
-                        nhanVienMapper.toResponseNhanVienDieuPhoi(e.getNhanVienDieuPhoi())
+                .maNhanVienDieuPhoi(
+                        e.getNhanVienDieuPhoi().getMaNhanVienDieuPhoi()
                 )
 
-                .donViXuLy(
-                        donViXuLyMapper.toResponse(e.getDonViXuLy())
+                .maDonViXuLy(
+                      e.getDonViXuLy().getMaDonViXuLy()
                 )
 
-                .suCo(
-                        sucoMapper.toDetail(
-                                e.getSuCo(),
-                                medias,
-                                List.of()
-                        )
+                .maSuCo(
+                        e.getSuCo().getMaSuCo()
                 )
                 .build();
     }
 
-    public List<PhieuPhanCongSCRespomse> toSummaryList(
-            List<PhieuPhanCongEntity> list,
-            Map<String, List<TepSuCoEntity>> mediaMap
-    ) {
-        if (list == null) return List.of();
 
-        return list.stream()
-                .map(p -> toSummary(
-                        p,
-                        mediaMap.getOrDefault(
-                                p.getSuCo().getMaSuCo(),
-                                List.of()
-                        )
-                ))
-                .toList();
+    public PhieuPhanCongSCResponse toResponse(
+            PhieuPhanCongEntity entity,
+            KetQuaXuLyDetailResponse ketQuaXuLy,
+            PhieuTrangThaiResponse trangThai
+    ) {
+
+        return PhieuPhanCongSCResponse.builder()
+                .maPhieuPhanCong(entity.getMaPhieuPhanCong())
+                .maSuCo(entity.getSuCo().getMaSuCo())
+                .maNhanVienDieuPhoi(
+                        entity.getNhanVienDieuPhoi()
+                                .getMaNhanVienDieuPhoi()
+                )
+                .trangThai(entity.getTrangThai())
+                .thoiGianTao(entity.getThoiGianTao())
+
+                .donViXuLy(
+                        DonViXuLySCResponse.builder()
+                                .maDonViXuLy(
+                                        entity.getDonViXuLy().getMaDonViXuLy()
+                                )
+                                .tenDonVi(
+                                        entity.getDonViXuLy().getTenDonVi()
+                                )
+                                .build()
+                )
+
+                .ketQuaXuLyDetailResponse(ketQuaXuLy)
+                .phieuTrangThaiResponse(trangThai)
+
+                .build();
     }
+
+
 }

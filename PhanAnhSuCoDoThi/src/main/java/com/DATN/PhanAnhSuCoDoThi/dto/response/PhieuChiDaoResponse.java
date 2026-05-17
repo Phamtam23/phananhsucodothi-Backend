@@ -12,9 +12,9 @@ import java.time.LocalDate;
 public class PhieuChiDaoResponse {
     private String maChiDao;
 
-    private ChiTietPhanCongEntity chiTietPhanCong;
+    private String maChiTietPhanCong;
 
-    private NhanVienDonViEntity truongDonVi;
+    private String maTruongDonVi;
 
     private String noiDung;
 

@@ -2,17 +2,20 @@ package com.DATN.PhanAnhSuCoDoThi.service;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Suco.CreateSucoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.SucoResponse;
-
-import java.util.List;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoSummaryResponse;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 
 public interface ISucoService {
 
-    PageResponse<SucoResponse> findAll(int page, int size);
+    PageResponse<SucoSummaryResponse> findAll(int page, int size);
 
-    SucoResponse findById(String id);
+    SucoDetailResponse findById(String id, String maNguoiDan);
 
-    SucoResponse create(CreateSucoRequest createSucoRequest, String maNguoiDan);
+    SucoDetailResponse create(CreateSucoRequest createSucoRequest, String maNguoiDan);
 
-    PageResponse<SucoResponse> findByNguoiDan(String maNguoiDan, int page, int size);
+    PageResponse<SucoSummaryResponse> findByNguoiDan(String maNguoiDan, int page, int size);
+
+
+    PageResponse<SucoSummaryResponse> findByTrangThai(int page, int size, TrangThaiSuCo trangThaiSuCo);
 }

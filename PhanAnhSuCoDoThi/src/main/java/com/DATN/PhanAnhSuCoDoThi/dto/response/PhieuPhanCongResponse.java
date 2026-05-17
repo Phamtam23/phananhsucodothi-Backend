@@ -1,6 +1,7 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,13 +16,13 @@ import java.time.LocalDateTime;
 public class PhieuPhanCongResponse {
     private String maPhieuPhanCong;
 
-    private SucoDetailResponse suCo;
+    private String maSuCo;
 
-    private DonViXuLyResponse donViXuLy;
+    private String maDonViXuLy;
 
-    private  NhanVienDieuPhoiResponse nhanVienDieuPhoi;
+    private  String maNhanVienDieuPhoi;
 
-    private String trangThai;
+    private TrangThaiPhanCong trangThai;
 
     private String ghiChu;
 

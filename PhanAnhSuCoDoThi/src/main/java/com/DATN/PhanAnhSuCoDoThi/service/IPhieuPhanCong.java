@@ -4,12 +4,13 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.CreatePhieuPhanCongRe
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.UpdatePhieuPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCResponse;
 
 import java.util.List;
 
 public interface IPhieuPhanCong {
 
-    PhieuPhanCongResponse create(CreatePhieuPhanCongRequest createPhieuPhanCongRequest, String maNhanVienDieuPhoi);
+    List<PhieuPhanCongResponse> create(CreatePhieuPhanCongRequest createPhieuPhanCongRequest, String maNhanVienDieuPhoi);
 
     PhieuPhanCongResponse update(String maPhieuPhanCong,UpdatePhieuPhanCongRequest updatePhieuPhanCongRequest);
 
@@ -17,4 +18,5 @@ public interface IPhieuPhanCong {
 
     PageResponse<PhieuPhanCongResponse> findAllByDonVi(String maDonVi, int page, int size );
 
+    List<PhieuPhanCongSCResponse> findAllBySuCo(String maSuCo, String maNguoiDan);
 }

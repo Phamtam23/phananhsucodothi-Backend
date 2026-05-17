@@ -2,17 +2,15 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Suco.CreateSucoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.SucoResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoSummaryResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.NguoidanEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
+import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanLoaiEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.TepSuCoEntity;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 import com.DATN.PhanAnhSuCoDoThi.mapper.SucoMapper;
-import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.SucoRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.TepSuCoRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.NguoidanRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.*;
 import com.DATN.PhanAnhSuCoDoThi.service.ISucoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -20,7 +18,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.DATN.PhanAnhSuCoDoThi.util.IdGenerator.generateMaSuCo;
 import static com.DATN.PhanAnhSuCoDoThi.util.IdGenerator.generateMaTep;
@@ -28,40 +29,79 @@ import static com.DATN.PhanAnhSuCoDoThi.util.IdGenerator.generateMaTep;
 @Service
 @RequiredArgsConstructor
 public class SucoService implements ISucoService {
-
     private final SucoRepository sucoRepository;
     private final TepSuCoRepository tepSuCoRepository;
     private final SucoMapper sucoMapper;
     private final NguoidanRepository nguoidanRepository;
-    private final PhieuPhanCongRepository phieuPhanCongRepository;
-
+    private final PhieuPhanLoaiRepository phieuPhanLoaiRepository;
     @Override
-    public PageResponse<SucoResponse> findAll(int page, int size) {
+    public PageResponse<SucoSummaryResponse> findAll(int page, int size) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by("thoiGianTao").descending());
         Page<SucoEntity> pageResult = sucoRepository.findAll(pageable);
 
-        Page<SucoResponse> mapper = pageResult.map(suco ->
-                sucoMapper.toResponse(
-                        suco,null,null
+        List<String> listMaSuCo = pageResult.getContent()
+                .stream()
+                .map(suCo -> suCo.getMaSuCo())
+                .collect(Collectors.toList());
+
+
+
+        Map<String,List<TepSuCoEntity>> tepTheoSuCo = layTepTheoSuCo(listMaSuCo);
+        Page<SucoSummaryResponse> mapper = pageResult.map(suco ->
+                sucoMapper.toSummary(
+                        suco,
+                        tepTheoSuCo.getOrDefault(suco.getMaSuCo(), Collections.emptyList()),
+                        getPhanLoaiSuco(suco.getMaSuCo())
+
         ) );
 
         return PageResponse.of(mapper);
     }
 
-    @Override
-    public SucoResponse findById(String maSuco) {
+    public List<String> getPhanLoaiSuco(String maSuCo) {
+        return phieuPhanLoaiRepository.findAllByMaSuCo(maSuCo)
+                .stream()
+                .map(p -> p.getLoai().getTenLoaiSuCo())
+                .toList();
+    }
 
-        SucoEntity sucoEntity;
-        sucoEntity = sucoRepository.findById(maSuco)
+    @Override
+    public PageResponse<SucoSummaryResponse> findByTrangThai(int page, int size, TrangThaiSuCo trangThaiSuCo) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("thoiGianTao").descending());
+        Page<SucoEntity> pageResult = sucoRepository.findAllByTrangThai(trangThaiSuCo,pageable);
+        List<String> listMaSuCo = pageResult.getContent()
+                .stream()
+                .map(suCo -> suCo.getMaSuCo())
+                .collect(Collectors.toList());
+
+        Map<String,List<TepSuCoEntity>> tepTheoSuCo = layTepTheoSuCo(listMaSuCo);
+        Page<SucoSummaryResponse> mapper = pageResult.map(suco ->
+                sucoMapper.toSummary(
+                        suco,
+                        tepTheoSuCo.getOrDefault(suco.getMaSuCo(), Collections.emptyList()),
+                        getPhanLoaiSuco(suco.getMaSuCo())
+
+                ) );
+
+        return PageResponse.of(mapper);
+    }
+
+    @Override
+    public SucoDetailResponse findById(String maSuco,String maNguoiDan) {
+        SucoEntity sucoEntity = sucoRepository.findById(maSuco)
                 .orElseThrow(()-> new RuntimeException("Khong tim thấy sự cố"));
         List<TepSuCoEntity> listTepSuCo = tepSuCoRepository.findBySuCo_MaSuCo(sucoEntity.getMaSuCo());
+        boolean isOwner =
+                sucoEntity.getNguoiDan().getMaNguoiDan().equals(maNguoiDan);
 
-        List<PhieuPhanCongEntity> listPhieuPhanCong = phieuPhanCongRepository.findAllBySuCo_MaSuCo(sucoEntity.getMaSuCo());
-        return sucoMapper.toResponse(sucoEntity, listTepSuCo,  listPhieuPhanCong);
+        boolean daXuLy =
+                sucoEntity.getTrangThai() == TrangThaiSuCo.DA_XU_LY_XONG;
+
+        return sucoMapper.toDetail(sucoEntity, listTepSuCo, getPhanLoaiSuco(sucoEntity.getMaSuCo()));
     }
     @Override
-    public SucoResponse create(CreateSucoRequest request, String maNguoiDan) {
+    public SucoDetailResponse create(CreateSucoRequest request, String maNguoiDan) {
 
         // 1. tìm người dân
         NguoidanEntity nguoiDan =nguoidanRepository.findById (maNguoiDan)
@@ -110,19 +150,40 @@ public class SucoService implements ISucoService {
         }
 
         // 5. trả response
-        return sucoMapper.toResponse(suco, tepList, List.of());
+        return sucoMapper.toDetail(suco, tepList, getPhanLoaiSuco(suco.getMaSuCo()));
     }
 
     @Override
-    public PageResponse<SucoResponse> findByNguoiDan(String maNguoiDan, int page, int size) {
+    public PageResponse<SucoSummaryResponse> findByNguoiDan(String maNguoiDan, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("thoiGianTao").descending());
         Page<SucoEntity> pageResult = sucoRepository.findAllByNguoiDan_MaNguoiDan(maNguoiDan,pageable);
 
-        Page<SucoResponse> mapper = pageResult.map(suco ->
-                sucoMapper.toResponse(
-                        suco,null,null
+        List<String> listMaSuCo = pageResult.getContent()
+                .stream()
+                .map(suCo -> suCo.getMaSuCo())
+                .collect(Collectors.toList());
+
+        Map<String,List<TepSuCoEntity>> tepTheoSuCo = layTepTheoSuCo(listMaSuCo);
+        Page<SucoSummaryResponse> mapper = pageResult.map(suco ->
+                sucoMapper.toSummary(
+                        suco,
+                        tepTheoSuCo.getOrDefault(suco.getMaSuCo(),Collections.emptyList()),
+                        getPhanLoaiSuco(suco.getMaSuCo())
                 ) );
 
         return PageResponse.of(mapper);
     }
+
+
+
+    private Map<String, List<TepSuCoEntity>> layTepTheoSuCo(List<String> maSuCoList) {
+        if (maSuCoList == null || maSuCoList.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        return tepSuCoRepository
+                .findBySuCo_MaSuCoIn(maSuCoList)
+                .stream()
+                .collect(Collectors.groupingBy(tep -> tep.getSuCo().getMaSuCo()));
+    }
+
 }

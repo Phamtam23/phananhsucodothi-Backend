@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.entity;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.MucDoDanhGia;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -19,18 +20,16 @@ public class PhieuDanhGiaEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maKetQua")
-    private KetQuaXuLyEntity ketQua;
+    private KetQuaXuLyEntity ketQuaXuLy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maNguoiDan")
     private NguoidanEntity nguoiDan;
 
-    /**
-     * Mức độ hài lòng: RAT_HAI_LONG, HAI_LONG, BINH_THUONG, KHONG_HAI_LONG
-     */
+    @Enumerated(EnumType.STRING)
     @Size(max = 20)
     @Column(name = "mucDoHaiLong", length = 20)
-    private String mucDoHaiLong;
+    private MucDoDanhGia mucDoHaiLong;
 
     @Column(name = "thoiGianTao")
     private LocalDateTime thoiGianTao;

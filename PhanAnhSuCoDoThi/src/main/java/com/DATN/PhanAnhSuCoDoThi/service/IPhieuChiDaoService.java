@@ -5,7 +5,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuChiDao.UpdateChiDaoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuChiDaoResponse;
 import org.springframework.data.domain.Page;
 
-public interface IPhieuChiDao {
+public interface IPhieuChiDaoService {
 
     PhieuChiDaoResponse create (CreateChiDaoRequest createChiDaoRequest);
 

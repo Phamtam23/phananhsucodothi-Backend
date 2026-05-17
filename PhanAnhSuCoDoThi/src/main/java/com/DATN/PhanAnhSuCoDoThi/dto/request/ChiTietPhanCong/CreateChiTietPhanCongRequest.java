@@ -14,7 +14,4 @@ public class CreateChiTietPhanCongRequest {
 
     private String maNhanVienXuLy;
 
-    private TrangThaiChiTietPhanCong trangThai;
-
-    private LocalDateTime thoiGianTao;
 }

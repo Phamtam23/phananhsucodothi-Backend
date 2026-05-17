@@ -5,7 +5,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuChiDao.CreateChiDaoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuChiDao.UpdateChiDaoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuChiDaoResponse;
-import com.DATN.PhanAnhSuCoDoThi.service.IPhieuChiDao;
+import com.DATN.PhanAnhSuCoDoThi.service.IPhieuChiDaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PhieuChiDaoController {
 
-    private final IPhieuChiDao phieuChiDaoService;
+    private final IPhieuChiDaoService phieuChiDaoService;
 
     @PostMapping
     public ApiSuccessResponse<PhieuChiDaoResponse> create(

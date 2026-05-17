@@ -3,23 +3,17 @@ package com.DATN.PhanAnhSuCoDoThi.entity;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * PhieuPhanCong - Phiếu phân công xử lý sự cố cho đơn vị
- * Bảng: PHIEUPHANCONG
- * PK: maPhieuPhanCong VARCHAR(10)
- * FK: suCo             → SUCO
- * FK: donViXuLy        → DONVIXULY
- * FK: nhanVienDieuPhoi → NHANVIENDIEUPHOI (người tạo phân công)
- */
 @Entity
 @Table(name = "PHIEUPHANCONG")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PhieuPhanCongEntity {
 
     @Id

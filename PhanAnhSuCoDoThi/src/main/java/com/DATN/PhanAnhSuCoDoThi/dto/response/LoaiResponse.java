@@ -5,6 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class NhanVienDonViReponse {
+public class LoaiResponse {
+    private String maLoai;
 
+    private String tenLoaiSuCo;
 }

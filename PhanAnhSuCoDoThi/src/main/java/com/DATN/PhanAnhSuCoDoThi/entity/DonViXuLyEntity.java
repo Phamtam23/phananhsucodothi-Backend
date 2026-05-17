@@ -1,14 +1,17 @@
 package com.DATN.PhanAnhSuCoDoThi.entity;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiDonVi;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = "DONVIXULY")
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DonViXuLyEntity {
 
     @Id
@@ -38,7 +41,7 @@ public class DonViXuLyEntity {
     @Column(name = "email", length = 100)
     private String email;
 
-    @Size(max = 20)
+    @Enumerated(EnumType.STRING)
     @Column(name = "trangThai", length = 20)
-    private String trangThai;
+    private TrangThaiDonVi trangThai;
 }

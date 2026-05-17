@@ -3,38 +3,61 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.ChiTietPhanCong.CreateChiTietPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.ChiTietPhanCong.UpdateChiTietPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.NhanVienDonVi.NhanVienDonViResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.ChiTietPhanCongEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDonViEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.mapper.ChiTietPhanCongMapper;
+import com.DATN.PhanAnhSuCoDoThi.mapper.NhanVienDonViMapper;
+import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuPhanCongMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.ChiTietPhanCongRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDonViRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository;
-import com.DATN.PhanAnhSuCoDoThi.service.IChiTietPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.service.IChiTietPhanCongService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+@Service
 @RequiredArgsConstructor
-public class ChiTietPhanCongService implements IChiTietPhanCong {
+public class ChiTietPhanCongService implements IChiTietPhanCongService {
 
-    ChiTietPhanCongRepository chiTietPhanCongRepository;
-    ChiTietPhanCongMapper chiTietPhanCongMapper;
-    PhieuPhanCongRepository phieuPhanCongRepository;
-    NhanVienDonViRepository nhanVienDonViRepository;
-
+    private final ChiTietPhanCongRepository chiTietPhanCongRepository;
+    private final ChiTietPhanCongMapper chiTietPhanCongMapper;
+    private final PhieuPhanCongRepository phieuPhanCongRepository;
+    private final NhanVienDonViRepository nhanVienDonViRepository;
+    private final NhanVienDonViMapper nhanVienDonViMapper;
+    private final PhieuPhanCongMapper  phieuPhanCongMapper;
     @Override
-    public PageResponse<ChiTietPhanCongEntity> FindAllByNhanVienXuLy(String nhanVienXuLy, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("thoiGianTao").descending());
-        PageResponse<ChiTietPhanCongEntity> chiTietPhanCongEntityPageResponse = chiTietPhanCongRepository.findByNhanVienXuLy_maNhanVienXuLy(nhanVienXuLy, pageable);
+    public PageResponse<ChiTietPhanCongEntity> FindAllByNhanVienXuLy(
+            String nhanVienXuLy,
+            int page,
+            int size
+    ) {
 
-        return chiTietPhanCongEntityPageResponse;
+        Pageable pageable = PageRequest.of(
+                page,
+                size,
+                Sort.by("thoiGianTao").descending()
+        );
+
+        Page<ChiTietPhanCongEntity> pageResult =
+                chiTietPhanCongRepository
+                        .findByNhanVienXuLy_MaNhanVien(
+                                nhanVienXuLy,
+                                pageable
+                        );
+
+        return PageResponse.of(pageResult);
     }
 
     @Override
@@ -42,15 +65,18 @@ public class ChiTietPhanCongService implements IChiTietPhanCong {
 
         ChiTietPhanCongEntity  chiTietPhanCong = chiTietPhanCongRepository.findById(maChiTietPhanCong)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chi tiết phân công"));
-        return chiTietPhanCongMapper.toResponse(chiTietPhanCong);
+
+        NhanVienDonViResponse nhanVienDonViResponse = nhanVienDonViMapper.toResponsePC(chiTietPhanCong.getNhanVienXuLy());
+
+        PhieuPhanCongResponse phieuPhanCongResponse = phieuPhanCongMapper.toResponse(chiTietPhanCong.getPhieuPhanCong());
+
+        return chiTietPhanCongMapper.toResponse(chiTietPhanCong,phieuPhanCongResponse,nhanVienDonViResponse);
     }
 
     @Override
     public ChiTietPhanCongResponse Create(CreateChiTietPhanCongRequest createChiTietPhanCongRequest, String maTruongDonVi) {
 
-        PhieuPhanCongEntity phieuPhanCongEntity = new PhieuPhanCongEntity();
-
-        phieuPhanCongEntity = phieuPhanCongRepository.findById(createChiTietPhanCongRequest.getMaPhieuPhanCong())
+        PhieuPhanCongEntity phieuPhanCongEntity = phieuPhanCongRepository.findById(createChiTietPhanCongRequest.getMaPhieuPhanCong())
                 .orElseThrow(()-> new RuntimeException("Không tìm thấy phiếu phân công"));
 
         NhanVienDonViEntity nhanVienDonViEntity = new NhanVienDonViEntity();
@@ -66,7 +92,11 @@ public class ChiTietPhanCongService implements IChiTietPhanCong {
         chiTietPhanCongEntity.setNhanVienXuLy(nhanVienDonViEntity);
         chiTietPhanCongRepository.save(chiTietPhanCongEntity);
 
-        return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity);
+        NhanVienDonViResponse nhanVienDonViResponse = nhanVienDonViMapper.toResponsePC(chiTietPhanCongEntity.getNhanVienXuLy());
+
+        PhieuPhanCongResponse phieuPhanCongResponse = phieuPhanCongMapper.toResponse(chiTietPhanCongEntity.getPhieuPhanCong());
+
+        return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity, phieuPhanCongResponse, nhanVienDonViResponse);
     }
 
     @Override
@@ -78,7 +108,7 @@ public class ChiTietPhanCongService implements IChiTietPhanCong {
 
         chiTietPhanCongEntity.setTrangThai(updateChiTietPhanCongRequest.getTrangThai());
 
-        return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity);
+        return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity,null,null);
 
     }
 

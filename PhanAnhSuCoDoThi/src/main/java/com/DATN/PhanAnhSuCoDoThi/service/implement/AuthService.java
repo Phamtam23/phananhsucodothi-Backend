@@ -97,37 +97,48 @@ public class AuthService implements IAuthService {
         String refMa = null;
         String role = null;
 
-        if (!quyens.isEmpty()) {
-            role = quyens.get(0);
-        }
+        if (quyens.contains("R_Admin")) {
 
-        switch (role) {
-            case "R_USER":
-                refMa = nguoidanRepository
-                        .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy người dân"))
-                        .getMaNguoiDan();
-                break;
+            role = "R_Admin";
 
-            case "R_DIEUPHOI":
-                refMa = nhanVienDieuPhoiRepository
-                        .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy NV điều phối"))
-                        .getMaNhanVienDieuPhoi();
-                break;
+        } else if (quyens.contains("R_TXULY")) {
 
-            case "R_NVXULY":
-                refMa = nhanVienDonViRepository
-                        .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy NV xử lý"))
-                        .getMaNhanVien();
-                break;
+            role = "R_TXULY";
 
-            case "R_Admin":
-                refMa = null;
+            refMa = nhanVienDonViRepository
+                    .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trưởng đơn vị"))
+                    .getMaNhanVien();
 
-            default:
-                throw new RuntimeException("Role không hợp lệ");
+        } else if (quyens.contains("R_NVXULY")) {
+
+            role = "R_NVXULY";
+
+            refMa = nhanVienDonViRepository
+                    .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy NV xử lý"))
+                    .getMaNhanVien();
+
+        } else if (quyens.contains("R_DIEUPHOI")) {
+
+            role = "R_DIEUPHOI";
+
+            refMa = nhanVienDieuPhoiRepository
+                    .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy NV điều phối"))
+                    .getMaNhanVienDieuPhoi();
+
+        } else if (quyens.contains("R_USER")) {
+
+            role = "R_USER";
+
+            refMa = nguoidanRepository
+                    .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dân"))
+                    .getMaNguoiDan();
+
+        } else {
+            throw new RuntimeException("Role không hợp lệ");
         }
 
         String token = jwtUtils.generateToken(

@@ -6,7 +6,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.ChiTietPhanCongEntity;
 
-public interface IChiTietPhanCong {
+public interface IChiTietPhanCongService {
 
     PageResponse<ChiTietPhanCongEntity> FindAllByNhanVienXuLy(String nhanVienXuLy, int page, int size);
 

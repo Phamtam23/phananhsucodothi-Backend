@@ -7,7 +7,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLySummaryRespon
 
 import java.util.List;
 
-public interface IKetQuaXuLy {
+public interface IKetQuaXuLyService {
 
   List<KetQuaXuLySummaryResponse> findByChiTietPhanCong(String maChiTietPhanCong);
 

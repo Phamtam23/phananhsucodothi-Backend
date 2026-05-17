@@ -5,10 +5,13 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.CreatePhieuPhanCongRe
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.UpdatePhieuPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCResponse;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuPhanCong;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/phancong")
@@ -18,7 +21,7 @@ public class PhieuPhanCongController {
     private final IPhieuPhanCong phieuPhanCongService;
 
     @PostMapping
-    public ApiSuccessResponse<PhieuPhanCongResponse> create(
+    public ApiSuccessResponse<List<PhieuPhanCongResponse>> create(
             @RequestBody CreatePhieuPhanCongRequest request
     ) {
         String maNhanVien = SecurityUtils.getCurrentRefMa();
@@ -47,8 +50,7 @@ public class PhieuPhanCongController {
         );
     }
 
-    //Còn has quyền với lấy laại mã đơn vị chứ này đang lấy mã của nhân viên
-    @GetMapping("/donvi")
+    @GetMapping("/don-vi")
     public ApiSuccessResponse<PageResponse<PhieuPhanCongResponse>> getByDonVi(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
@@ -58,6 +60,16 @@ public class PhieuPhanCongController {
 
         return ApiSuccessResponse.ok(
                 phieuPhanCongService.findAllByDonVi(maDonVi, page, size)
+        );
+    }
+
+    @GetMapping("/su-co/{maSuCo}")
+    public ApiSuccessResponse<List<PhieuPhanCongSCResponse>> getBySuCo(
+            @PathVariable String maSuCo
+    ) {
+        String maNguoiDan = SecurityUtils.getCurrentRefMa();
+        return ApiSuccessResponse.ok(
+                phieuPhanCongService.findAllBySuCo(maSuCo,maNguoiDan)
         );
     }
 }

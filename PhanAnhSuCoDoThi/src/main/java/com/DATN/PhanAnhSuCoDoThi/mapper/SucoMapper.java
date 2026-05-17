@@ -1,12 +1,8 @@
 package com.DATN.PhanAnhSuCoDoThi.mapper;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.response.MediaResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCRespomse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoSummaryResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.SucoResponse;
-import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.TepSuCoEntity;
 import lombok.RequiredArgsConstructor;
@@ -20,10 +16,7 @@ import java.util.stream.Collectors;
 public class SucoMapper {
     private final NhanVienMapper nhanVienMapper;
     private final DonViXuLyMapper donViXuLyMapper;
-    private final PhieuPhanCongMapper phieuPhanCongMapper;
-
-
-    public SucoSummaryResponse toSummary(SucoEntity e, List<TepSuCoEntity> medias) {
+    public SucoSummaryResponse toSummary(SucoEntity e, List<TepSuCoEntity> medias, List<String> loaiSuCos) {
         if (e == null) return null;
 
         return SucoSummaryResponse.builder()
@@ -33,13 +26,14 @@ public class SucoMapper {
                 .trangThai(e.getTrangThai() != null ? e.getTrangThai().name() : null)
                 .thoiGianTao(e.getThoiGianTao())
                 .thumbnail(getThumbnail(medias))
+                .loaiSuCos(loaiSuCos)
                 .build();
     }
 
     public SucoDetailResponse toDetail(
             SucoEntity e,
             List<TepSuCoEntity> medias,
-            List<PhieuPhanCongEntity> phieus
+            List<String> loaiSuCos
     ) {
         if (e == null) return null;
 
@@ -54,8 +48,8 @@ public class SucoMapper {
                 .kinhDo(e.getKinhDo())
                 .viDo(e.getViDo())
                 .ngayDuKienHoanThanh(e.getNgayDuKienHoanThanh())
+                .loaiSuCos(loaiSuCos)
                 .medias(mapMedia(medias))
-                .phieuPhanCongs(phieuPhanCongMapper(phieus))
                 .build();
     }
 
@@ -67,64 +61,13 @@ public class SucoMapper {
         return medias.get(0).getUrl();
     }
 
-
-    public SucoResponse toResponse(SucoEntity sucoEntity, List<TepSuCoEntity> tepSuCoEntity , List<PhieuPhanCongEntity> phieuPhanCongEntitys) {
-        if (sucoEntity == null) return null;
-        return SucoResponse.builder()
-                .maSuCo(sucoEntity.getMaSuCo())
-                .maNguoiDan(
-                        sucoEntity.getNguoiDan() != null
-                                ? sucoEntity.getNguoiDan().getMaNguoiDan()
-                                : null
-                )
-                .kinhDo(sucoEntity.getKinhDo())
-                .viDo(sucoEntity.getViDo())
-                .diaDiem(sucoEntity.getDiaDiem())
-                .noiDung(sucoEntity.getNoiDung())
-                .trangThai(
-                        sucoEntity.getTrangThai() != null
-                                ? sucoEntity.getTrangThai().name()
-                                : null
-                )
-                .ngayDuKienHoanThanh(sucoEntity.getNgayDuKienHoanThanh())
-                .thoiGianTao(sucoEntity.getThoiGianTao())
-
-                // media
-                .medias(mapMedia(tepSuCoEntity))
-
-                .phieuPhanCongs(mapPhieuPhanCongs(phieuPhanCongEntitys))
-                .build();
-
-    }
-
-
-
     private static List<MediaResponse> mapMedia(List<TepSuCoEntity> medias) {
         if (medias == null) return null;
 
         return medias.stream()
                 .map(m -> MediaResponse.builder()
                         .url(m.getUrl())
-                        .type(m.getLoai())
-                        .build()
-                )
-                .collect(Collectors.toList());
-    }
-
-    private List<PhieuPhanCongSCRespomse> mapPhieuPhanCongs(List<PhieuPhanCongEntity> phieuPhanCongs) {
-        if (phieuPhanCongs == null) return null;
-
-        return phieuPhanCongs.stream()
-                .map(m -> PhieuPhanCongSCRespomse.builder()
-                        .maPhieuPhanCong(m.getMaPhieuPhanCong())
-                        .nhanVienDieuPhoi(
-                                nhanVienMapper.toResponseNhanVienDieuPhoi(m.getNhanVienDieuPhoi())
-                        )
-                        .donViXuLy(
-                                donViXuLyMapper.toResponse(m.getDonViXuLy())
-                        )
-                        .trangThai(m.getTrangThai())
-                        .thoiGianTao(m.getThoiGianTao())
+                        .loai(m.getLoai())
                         .build()
                 )
                 .collect(Collectors.toList());

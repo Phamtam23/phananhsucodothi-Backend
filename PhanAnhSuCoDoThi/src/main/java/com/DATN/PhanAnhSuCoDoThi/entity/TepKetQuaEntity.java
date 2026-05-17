@@ -5,12 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * TepKetQua - Tệp đính kèm minh chứng kết quả xử lý
- * Bảng: TEPKETQUA
- * PK: maTepKetQua VARCHAR(10)
- * FK: ketQua → KETQUAXULY
- */
 @Entity
 @Table(name = "TEPKETQUA")
 @Getter

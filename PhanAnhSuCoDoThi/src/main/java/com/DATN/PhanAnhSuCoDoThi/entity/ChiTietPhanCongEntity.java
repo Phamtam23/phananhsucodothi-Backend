@@ -8,13 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * ChiTietPhanCong - Chi tiết phân công cho nhân viên xử lý cụ thể
- * Bảng: CHITIETPHANCONG
- * PK: maChiTietPhanCong VARCHAR(10)
- * FK: phieuPhanCong → PHIEUPHANCONG
- * FK: nhanVienXuLy  → NHANVIEN_DONVI (nhân viên đơn vị thực hiện)
- */
 @Entity
 @Table(name = "CHITIETPHANCONG")
 @Getter

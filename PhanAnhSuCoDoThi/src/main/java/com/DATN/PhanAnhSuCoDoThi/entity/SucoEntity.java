@@ -31,7 +31,7 @@ public class SucoEntity {
 
     @Size(max = 255)
     @Column(name = "diaDiem", columnDefinition = "nvarchar(500)")
-    private String diaDiem;
+    private String diaDiem; 
 
     @Column(name = "ngayDuKienHoanThanh")
     private LocalDate ngayDuKienHoanThanh;

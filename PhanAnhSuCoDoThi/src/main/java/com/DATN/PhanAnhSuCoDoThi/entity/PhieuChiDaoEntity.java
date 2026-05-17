@@ -31,6 +31,6 @@ public class PhieuChiDaoEntity {
     @Column(name = "ngayChiDao")
     private LocalDate ngayChiDao;
 
-    @Column(name ="DeleteAt")
-    private LocalDateTime DeleteAt;
+    @Column(name ="deletedAt")
+    private LocalDateTime deletedAt;
 }

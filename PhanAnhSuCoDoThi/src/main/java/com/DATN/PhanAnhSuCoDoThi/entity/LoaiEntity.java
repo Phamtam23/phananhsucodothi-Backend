@@ -5,11 +5,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Loai - Loại sự cố
- * Bảng: LOAI
- * PK: maLoaiSuCo VARCHAR(10)
- */
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "LOAI")
 @Getter
@@ -26,4 +23,7 @@ public class LoaiEntity {
 
     @Column(name = "moTa", columnDefinition = "TEXT")
     private String moTa;
+
+    @Column(name = "deletedAt")
+    private LocalDate deletedAt;
 }

@@ -1,18 +1,12 @@
 package com.DATN.PhanAnhSuCoDoThi.entity;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiMoLai;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * PhieuMoLai - Phiếu yêu cầu mở lại sự cố khi người dân không đồng ý kết quả
- * Bảng: PHIEUMOLAI
- * PK: maPhieuMoLai VARCHAR(10)
- * FK: nguoiDan → NGUOIDAN
- * FK: ketQua   → KETQUAXULY
- */
 @Entity
 @Table(name = "PHIEUMOLAI")
 @Getter
@@ -29,11 +23,15 @@ public class PhieuMoLaiEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maKetQua")
-    private KetQuaXuLyEntity ketQua;
+    private KetQuaXuLyEntity ketQuaXuLy;
 
     @Column(name = "thoiGianTao")
     private LocalDateTime thoiGianTao;
 
     @Column(name = "lyDo", columnDefinition = "TEXT")
     private String lyDo;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "trangThaiMoLai", length = 20)
+    private TrangThaiMoLai trangThaiMoLai;
 }

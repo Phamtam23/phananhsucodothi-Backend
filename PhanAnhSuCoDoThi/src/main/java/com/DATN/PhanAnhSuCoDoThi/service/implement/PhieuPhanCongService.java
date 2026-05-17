@@ -2,11 +2,11 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.CreatePhieuPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.UpdatePhieuPhanCongRequest;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuKiemDuyetResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.*;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLyDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.*;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.mapper.KetQuaXuLyMapper;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuPhanCongMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.*;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuPhanCong;
@@ -18,8 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,32 +26,67 @@ import java.util.stream.Collectors;
 public class PhieuPhanCongService implements IPhieuPhanCong {
 
     private final PhieuPhanCongRepository phieuPhanCongRepository;
+    private final KetQuaXuLyMapper ketQuaXuLyMapper;
     private final SucoRepository sucoRepository;
     private final DonViXuLyRepository donViXuLyRepository;
     private final NhanVienDieuPhoiRepository  nhanVienDieuPhoiRepository;
     private final PhieuPhanCongMapper phieuPhanCongMapper;
     private final TepSuCoRepository tepSuCoRepository;
+    private final KetQuaXuLyRepository ketQuaXuLyRepository;
+    private final TepKetQuaRepository tepKetQuaRepository;
+    private final PhieuDanhGiaRepository phieuDanhGiaRepository;
+    private final PhieuMoLaiRepository phieuMoLaiRepository;
     @Override
-    public PhieuPhanCongResponse create(CreatePhieuPhanCongRequest createPhieuPhanCongRequest, String maNhanVienDieuPhoi) {
-        PhieuPhanCongEntity phieuPhanCongEntity = new PhieuPhanCongEntity();
-        SucoEntity sucoEntity = sucoRepository
-                .findById(createPhieuPhanCongRequest.getMaSuCo())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy sự cố"));
-        DonViXuLyEntity donViXuLyEntity = donViXuLyRepository
-                .findById(createPhieuPhanCongRequest.getMaDonViXuLy())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị xử lý"));
-        NhanVienDieuPhoiEntity nhanVienDieuPhoiEntity = nhanVienDieuPhoiRepository
-                .findById(maNhanVienDieuPhoi)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên điều phối"));
+    public List<PhieuPhanCongResponse> create(
+            CreatePhieuPhanCongRequest request,
+            String maNhanVienDieuPhoi
+    ) {
 
-        String maPhieuPhanCong = IdGenerator.generateMaPhieuPhanCong(createPhieuPhanCongRequest.getMaSuCo(),createPhieuPhanCongRequest.getMaDonViXuLy());
-        phieuPhanCongEntity.setMaPhieuPhanCong(maPhieuPhanCong);
-        phieuPhanCongEntity.setSuCo(sucoEntity);
-        phieuPhanCongEntity.setDonViXuLy(donViXuLyEntity);
-        phieuPhanCongEntity.setNhanVienDieuPhoi(nhanVienDieuPhoiEntity);
-        phieuPhanCongEntity.setTrangThai(TrangThaiPhanCong.CHO_XAC_NHAN);
-        phieuPhanCongRepository.save(phieuPhanCongEntity);
-        return phieuPhanCongMapper.toDetail (phieuPhanCongEntity,null);
+        SucoEntity sucoEntity = sucoRepository
+                .findById(request.getMaSuCo())
+                .orElseThrow(() ->
+                        new RuntimeException("Không tìm thấy sự cố"));
+
+        NhanVienDieuPhoiEntity nhanVienDieuPhoiEntity =
+                nhanVienDieuPhoiRepository
+                        .findById(maNhanVienDieuPhoi)
+                        .orElseThrow(() ->
+                                new RuntimeException("Không tìm thấy nhân viên điều phối"));
+
+        return request.getMaDonViXuLy()
+                .stream()
+                .map(maDonVi -> {
+
+                    DonViXuLyEntity donViXuLyEntity =
+                            donViXuLyRepository
+                                    .findById(maDonVi)
+                                    .orElseThrow(() ->
+                                            new RuntimeException(
+                                                    "Không tìm thấy đơn vị xử lý: " + maDonVi
+                                            ));
+
+                    String maPhieuPhanCong =
+                            IdGenerator.generateMaPhieuPhanCong(
+                                    request.getMaSuCo(),
+                                    maDonVi
+                            );
+
+                    PhieuPhanCongEntity phieuPhanCongEntity =
+                            PhieuPhanCongEntity.builder()
+                                    .maPhieuPhanCong(maPhieuPhanCong)
+                                    .suCo(sucoEntity)
+                                    .donViXuLy(donViXuLyEntity)
+                                    .nhanVienDieuPhoi(nhanVienDieuPhoiEntity)
+                                    .trangThai(TrangThaiPhanCong.CHO_XAC_NHAN)
+                                    .build();
+
+                    return phieuPhanCongRepository.save(
+                            phieuPhanCongEntity
+                    );
+
+                })
+                .map(phieuPhanCongMapper::toResponse)
+                .toList();
     }
 
     @Override
@@ -89,9 +123,8 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
 
         phieuPhanCongRepository.save(phieuPhanCongEntity);
 
-        return phieuPhanCongMapper.toDetail(
-                phieuPhanCongEntity,
-                null
+        return phieuPhanCongMapper.toResponse(
+                phieuPhanCongEntity
         );
     }
 
@@ -99,10 +132,8 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
     public PhieuPhanCongResponse findById(String ma) {
         PhieuPhanCongEntity phieuPhanCongEntity = phieuPhanCongRepository.findById(ma)
                 .orElseThrow(() -> new RuntimeException("Không tìm thâý phiếu phân công"));
-        List<TepSuCoEntity> medias =
-                tepSuCoRepository.findBySuCo_MaSuCo(phieuPhanCongEntity.getSuCo().getMaSuCo());
 
-        return phieuPhanCongMapper.toDetail (phieuPhanCongEntity,medias);
+        return phieuPhanCongMapper.toResponse (phieuPhanCongEntity);
     }
 
     @Override
@@ -124,15 +155,162 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
         List<TepSuCoEntity> medias =
                 tepSuCoRepository.findBySuCo_MaSuCoIn(maSuCos);
 
-        Map<String, List<TepSuCoEntity>> mediaMap = medias.stream()
-                .collect(Collectors.groupingBy(m -> m.getSuCo().getMaSuCo()));
-
         Page<PhieuPhanCongResponse> mappedPage = pageResult.map(p ->
-                phieuPhanCongMapper.toDetail(
-                        p,
-                        mediaMap.getOrDefault(p.getSuCo().getMaSuCo(), List.of())
-                )
+                phieuPhanCongMapper.toResponse(p)
         );
         return PageResponse.of(mappedPage);
     }
+
+    @Override
+    public List<PhieuPhanCongSCResponse> findAllBySuCo(
+            String maSuCo,
+            String maNguoiDan
+    ) {
+
+        List<PhieuPhanCongEntity> phieuPhanCongs =
+                phieuPhanCongRepository.findAllBySuCo_MaSuCo(maSuCo);
+
+        if (phieuPhanCongs.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<String> maPhieus = phieuPhanCongs.stream()
+                .map(PhieuPhanCongEntity::getMaPhieuPhanCong)
+                .toList();
+
+        Map<String, KetQuaXuLyDetailResponse> ketQuaTheoPhieu =
+                getKetQuaTheoPhieu(phieuPhanCongs);
+
+        Set<String> daDanhGiaSet =
+                phieuDanhGiaRepository.findMaPhieuDaDanhGia(
+                        maNguoiDan,
+                        maPhieus
+                );
+
+        Set<String> daMoLaiSet =
+                phieuMoLaiRepository.findMaPhieuDaMoLai(
+                        maNguoiDan,
+                        maPhieus
+                );
+
+        return phieuPhanCongs.stream()
+                .map(p -> {
+
+                    String maPhieu = p.getMaPhieuPhanCong();
+
+                    boolean laNguoiGui =
+                            p.getSuCo()
+                                    .getNguoiDan()
+                                    .getMaNguoiDan()
+                                    .equals(maNguoiDan);
+
+                    boolean coKetQua =
+                            ketQuaTheoPhieu.containsKey(maPhieu);
+
+                    boolean daDanhGia =
+                            daDanhGiaSet.contains(maPhieu);
+
+                    boolean canDanhGia =
+                            laNguoiGui
+                                    && coKetQua
+                                    && !daDanhGia;
+
+                    boolean daMoLai =
+                            daMoLaiSet.contains(maPhieu);
+
+                    boolean canMoLai =
+                            laNguoiGui
+                                    && coKetQua
+                                    && !daMoLai;
+
+                    PhieuTrangThaiResponse trangThai =
+                            PhieuTrangThaiResponse.builder()
+                                    .canDanhGia(canDanhGia)
+                                    .daDanhGia(daDanhGia)
+                                    .canMoLai(canMoLai)
+                                    .daMoLai(daMoLai)
+                                    .build();
+
+                    return phieuPhanCongMapper.toResponse(
+                            p,
+                            ketQuaTheoPhieu.get(maPhieu),
+                            trangThai
+                    );
+                })
+                .toList();
+    }
+
+    private Map<String, KetQuaXuLyDetailResponse> getKetQuaTheoPhieu(
+            List<PhieuPhanCongEntity> phieuPhanCongs
+    ) {
+
+        List<String> maPhieus = phieuPhanCongs.stream()
+                .map(PhieuPhanCongEntity::getMaPhieuPhanCong)
+                .toList();
+
+        List<KetQuaXuLyEntity> ketQuas =
+                ketQuaXuLyRepository.findByPhieuPhanCongIn(maPhieus);
+
+        if (ketQuas.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        Map<String, List<MediaResponse>> tepTheoKetQua =
+                getMediaTheoKetQua(ketQuas);
+
+        return ketQuas.stream()
+                .collect(Collectors.toMap(
+
+                        k -> k.getChiTietPhanCong()
+                                .getPhieuPhanCong()
+                                .getMaPhieuPhanCong(),
+
+                        k -> {
+
+                            KetQuaXuLyDetailResponse response =
+                                    ketQuaXuLyMapper.toDetailResponse(k);
+
+                            response.setMedias(
+                                    tepTheoKetQua.getOrDefault(
+                                            k.getMaKetQua(),
+                                            Collections.emptyList()
+                                    )
+                            );
+
+                            return response;
+                        },
+
+                        (a, b) -> a
+                ));
+    }
+
+    private Map<String, List<MediaResponse>> getMediaTheoKetQua(
+            List<KetQuaXuLyEntity> ketQuas
+    ) {
+
+        List<String> maKetQuas = ketQuas.stream()
+                .map(KetQuaXuLyEntity::getMaKetQua)
+                .toList();
+
+        List<TepKetQuaEntity> teps =
+                tepKetQuaRepository.findAllByKetQua_MaKetQuaIn(maKetQuas);
+
+        return teps.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getKetQua().getMaKetQua(),
+
+                        Collectors.mapping(
+                                t -> MediaResponse.builder()
+                                        .url(t.getUrl())
+                                        .loai(t.getLoai())
+                                        .build(),
+
+                                Collectors.toList()
+                        )
+                ));
+    }
+
+
+
+
 }

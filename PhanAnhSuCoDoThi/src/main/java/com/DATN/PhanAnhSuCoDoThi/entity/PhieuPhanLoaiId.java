@@ -3,10 +3,6 @@ package com.DATN.PhanAnhSuCoDoThi.entity;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * PhieuPhanLoaiId - Khóa chính ghép cho PHIEUPHANLOAI
- * Composite PK: (maSuCo, maLoaiSuCo)
- */
 public class PhieuPhanLoaiId implements Serializable {
 
     private String maSuCo;

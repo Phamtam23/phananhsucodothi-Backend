@@ -9,7 +9,8 @@ import java.util.Optional;
 
 public interface PhieuChiDaoRepository extends JpaRepository<PhieuChiDaoEntity, String> {
 
-  Optional<PhieuChiDaoEntity> findByIdAndDeletedAtIsNull(String maChiDao);
+  Optional<PhieuChiDaoEntity> findByMaChiDaoAndDeletedAtIsNull(String maChiDao);
 
-  Page<PhieuChiDaoEntity> findByNhanVienDonVi_maNhanVienXuLy(String maNhanVienXuLy, Pageable pageable);
+    Page<PhieuChiDaoEntity>
+    findByTruongDonVi_MaNhanVien(String maNhanVien, Pageable pageable);
 }

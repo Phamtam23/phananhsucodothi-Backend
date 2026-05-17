@@ -13,7 +13,8 @@ public class PhieuChiDaoMapper {
                 .maChiDao(phieuChiDaoEntity.getMaChiDao())
                 .ngayChiDao(phieuChiDaoEntity.getNgayChiDao())
                 .noiDung(phieuChiDaoEntity.getNoiDung())
-                .truongDonVi(phieuChiDaoEntity.getTruongDonVi())
+                .maTruongDonVi(phieuChiDaoEntity.getTruongDonVi().getMaNhanVien())
+                .maChiTietPhanCong(phieuChiDaoEntity.getChiTietPhanCong().getMaChiTietPhanCong())
                 .build();
     }
 }

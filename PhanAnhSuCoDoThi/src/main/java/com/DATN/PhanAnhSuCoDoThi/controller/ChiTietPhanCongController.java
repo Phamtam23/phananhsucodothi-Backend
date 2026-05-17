@@ -7,7 +7,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.ChiTietPhanCongEntity;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
-import com.DATN.PhanAnhSuCoDoThi.service.IChiTietPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.service.IChiTietPhanCongService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class ChiTietPhanCongController {
 
-    private final IChiTietPhanCong chiTietPhanCongService;
+    private final IChiTietPhanCongService chiTietPhanCongService;
 
     @GetMapping("/nhan-vien")
     public ApiSuccessResponse<PageResponse<ChiTietPhanCongEntity>> findAllByNhanVienXuLy(

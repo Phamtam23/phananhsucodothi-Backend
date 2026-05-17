@@ -2,9 +2,11 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuKiemDuyet.CreatePhieuKiemDuyetRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuKiemDuyetResponse;
+import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDieuPhoiEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuKiemDuyetEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuKiemDuyetMapper;
+import com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDieuPhoiRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.PhieuKiemDuyetRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.SucoRepository;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
@@ -13,6 +15,7 @@ import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -21,7 +24,7 @@ public class PhieuKiemDuyetService implements IPhieuKiemDuyetService {
     private final SucoRepository sucoRepository;
     private final PhieuKiemDuyetRepository phieuKiemDuyetRepository;
     private final PhieuKiemDuyetMapper phieuKiemDuyetMapper;
-
+    private final NhanVienDieuPhoiRepository  nhanVienDieuPhoiRepository;
     @Override
     public PhieuKiemDuyetResponse create(CreatePhieuKiemDuyetRequest request) {
 
@@ -29,9 +32,14 @@ public class PhieuKiemDuyetService implements IPhieuKiemDuyetService {
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sự cố"));
 
         String refMa = SecurityUtils.getCurrentRefMa();
+        NhanVienDieuPhoiEntity nhanVienDieuPhoiEntity = nhanVienDieuPhoiRepository.findById(refMa)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy nhân viên"));
         PhieuKiemDuyetEntity entity = new PhieuKiemDuyetEntity();
         entity.setMaKiemDuyet(IdGenerator.generateMaPhieuKiemDuyet(refMa));
         entity.setTrangThai(request.getTrangThaiKiemDuyet());
+        entity.setNhanVienDieuPhoi(nhanVienDieuPhoiEntity);
+        entity.setLyDoTuChoi(request.getLyDoTuChoi());
+        entity.setThoiGianTao(LocalDateTime.now());
         entity.setSuCo(suCo);
 
         phieuKiemDuyetRepository.save(entity);

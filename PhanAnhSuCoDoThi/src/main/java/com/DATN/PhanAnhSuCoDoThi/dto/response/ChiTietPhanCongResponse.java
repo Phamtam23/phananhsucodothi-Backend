@@ -1,21 +1,22 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response;
 
-import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDonViEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.NhanVienDonVi.NhanVienDonViResponse;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 @Builder
 @Getter
+@Data
 public class ChiTietPhanCongResponse {
 
     private String maChiTietPhanCong;
 
-    private PhieuPhanCongEntity phieuPhanCong;
+    private PhieuPhanCongResponse phieuPhanCong;
 
-    private NhanVienDonViEntity nhanVienXuLy;
+    private NhanVienDonViResponse nhanVienXuLy;
 
     private TrangThaiChiTietPhanCong trangThai;
 

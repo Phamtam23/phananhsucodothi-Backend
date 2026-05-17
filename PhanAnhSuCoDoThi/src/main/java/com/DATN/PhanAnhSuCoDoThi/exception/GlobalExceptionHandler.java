@@ -61,9 +61,10 @@ public class GlobalExceptionHandler {
             Exception ex,
             HttpServletRequest request
     ) {
+        ex.printStackTrace();
 
         Map<String, String> errors = new HashMap<>();
-        errors.put("message", "Internal server error");
+        errors.put("message", ex.getMessage() != null ? ex.getMessage() : "Internal server error");
 
         ApiErrorResponse response = ApiErrorResponse.of(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),

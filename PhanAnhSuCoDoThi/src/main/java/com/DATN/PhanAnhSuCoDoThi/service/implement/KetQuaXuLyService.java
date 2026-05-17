@@ -10,7 +10,7 @@ import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiKetQua;
 import com.DATN.PhanAnhSuCoDoThi.mapper.KetQuaXuLyMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.ChiTietPhanCongRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.KetQuaXuLyRepository;
-import com.DATN.PhanAnhSuCoDoThi.service.IKetQuaXuLy;
+import com.DATN.PhanAnhSuCoDoThi.service.IKetQuaXuLyService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class KetQuaXuLyService implements IKetQuaXuLy {
+public class KetQuaXuLyService implements IKetQuaXuLyService {
 
     private final KetQuaXuLyRepository ketQuaXuLyRepository;
     private final ChiTietPhanCongRepository chiTietPhanCongRepository;

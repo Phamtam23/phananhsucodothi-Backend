@@ -14,10 +14,10 @@ public interface PhieuPhanCongRepository extends JpaRepository<PhieuPhanCongEnti
     List<PhieuPhanCongEntity> findAllBySuCo_MaSuCoIn(List<String> su_MaSuCo);
 
     List<PhieuPhanCongEntity> findAllBySuCo_MaSuCo(String su_MaSuCo);
-    @Override
-    Optional<PhieuPhanCongEntity> findById(String s);
 
     Page<PhieuPhanCongEntity> findAllByDonViXuLy_MaDonViXuLy(String maDonViXuLy, Pageable pageable);
+
+    
 
 }
 

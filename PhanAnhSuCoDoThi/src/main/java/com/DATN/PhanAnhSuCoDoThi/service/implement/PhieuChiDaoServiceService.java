@@ -10,7 +10,7 @@ import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuChiDaoMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.ChiTietPhanCongRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDonViRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.PhieuChiDaoRepository;
-import com.DATN.PhanAnhSuCoDoThi.service.IPhieuChiDao;
+import com.DATN.PhanAnhSuCoDoThi.service.IPhieuChiDaoService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,7 +23,7 @@ import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
-public class PhieuChiDaoService implements IPhieuChiDao {
+public class PhieuChiDaoServiceService implements IPhieuChiDaoService {
     PhieuChiDaoRepository phieuChiDaoRepository;
     PhieuChiDaoMapper  phieuChiDaoMapper;
     NhanVienDonViRepository nhanVienDonViRepository;
@@ -51,7 +51,7 @@ public class PhieuChiDaoService implements IPhieuChiDao {
 
     @Override
     public PhieuChiDaoResponse update(String maChiDao, UpdateChiDaoRequest updateChiDaoRequest) {
-        PhieuChiDaoEntity phieuChiDaoEntity = phieuChiDaoRepository.findByIdAndDeletedAtIsNull(maChiDao)
+        PhieuChiDaoEntity phieuChiDaoEntity = phieuChiDaoRepository.findByMaChiDaoAndDeletedAtIsNull(maChiDao)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chỉ đạo"));
         phieuChiDaoEntity.setNoiDung(updateChiDaoRequest.getNoiDung());
 
@@ -60,16 +60,16 @@ public class PhieuChiDaoService implements IPhieuChiDao {
 
     @Override
     public String deleteById(String maChiDao) {
-        PhieuChiDaoEntity phieuChiDaoEntity = phieuChiDaoRepository.findByIdAndDeletedAtIsNull(maChiDao)
+        PhieuChiDaoEntity phieuChiDaoEntity = phieuChiDaoRepository.findByMaChiDaoAndDeletedAtIsNull(maChiDao)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chỉ đạo"));
-        phieuChiDaoEntity.setDeleteAt(LocalDateTime.now());
+        phieuChiDaoEntity.setDeletedAt(LocalDateTime.now());
 
         return "Xóa thành công";
     }
 
     @Override
     public PhieuChiDaoResponse findById(String maChiDao) {
-        PhieuChiDaoEntity phieuChiDaoEntity = phieuChiDaoRepository.findByIdAndDeletedAtIsNull(maChiDao)
+        PhieuChiDaoEntity phieuChiDaoEntity = phieuChiDaoRepository.findByMaChiDaoAndDeletedAtIsNull(maChiDao)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy chỉ đạo"));
         return phieuChiDaoMapper.toResponse(phieuChiDaoEntity);
     }
@@ -77,7 +77,7 @@ public class PhieuChiDaoService implements IPhieuChiDao {
     @Override
     public Page<PhieuChiDaoResponse> findByChiTietPhanCong(String maChiTietPhanCong, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PhieuChiDaoEntity> pageResult = phieuChiDaoRepository.findByNhanVienDonVi_maNhanVienXuLy(
+        Page<PhieuChiDaoEntity> pageResult = phieuChiDaoRepository.findByTruongDonVi_MaNhanVien(
                 maChiTietPhanCong,
                 pageable);
 
