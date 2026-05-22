@@ -12,6 +12,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/chi-tiet-phan-cong")
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class ChiTietPhanCongController {
     private final IChiTietPhanCongService chiTietPhanCongService;
 
     @GetMapping("/nhan-vien")
-    public ApiSuccessResponse<PageResponse<ChiTietPhanCongEntity>> findAllByNhanVienXuLy(
+    public ApiSuccessResponse<PageResponse<ChiTietPhanCongResponse>> findAllByNhanVienXuLy(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
@@ -66,12 +68,20 @@ public class ChiTietPhanCongController {
             @PathVariable String maChiTietPhanCong,
             @Valid @RequestBody UpdateChiTietPhanCongRequest request
     ) {
-
         return ApiSuccessResponse.ok(
                 chiTietPhanCongService.update(
                         request,
                         maChiTietPhanCong
                 )
+        );
+    }
+
+    @GetMapping("/phan-cong/{maPhieuPhanCong}")
+    public ApiSuccessResponse<List<ChiTietPhanCongResponse>> findByPhanCongId(
+            @PathVariable String maPhieuPhanCong
+    ) {
+        return ApiSuccessResponse.ok(
+                chiTietPhanCongService.FindAllByPhanCongId(maPhieuPhanCong)
         );
     }
 }

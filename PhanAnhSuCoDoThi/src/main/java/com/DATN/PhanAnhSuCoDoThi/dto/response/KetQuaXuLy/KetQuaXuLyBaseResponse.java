@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiKetQua;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,4 +17,6 @@ public class KetQuaXuLyBaseResponse {
     String maChiTietPhanCong;
     LocalDateTime thoiGianNop;
     String noiDungThucHien;
+    TrangThaiKetQua trangThai;
+    String lyDoTuChoi;
 }

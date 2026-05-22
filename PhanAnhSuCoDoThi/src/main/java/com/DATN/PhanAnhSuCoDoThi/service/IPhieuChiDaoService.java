@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 public interface IPhieuChiDaoService {
 
-    PhieuChiDaoResponse create (CreateChiDaoRequest createChiDaoRequest);
+    PhieuChiDaoResponse create (CreateChiDaoRequest createChiDaoRequest,String maTruongDonVi);
 
     PhieuChiDaoResponse update (String maChiDao, UpdateChiDaoRequest updateChiDaoRequest);
 

@@ -2,14 +2,20 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuMoLai.CreatePhieuMoLaiRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuMoLai.UpdatePhieuMoLai;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuMoLai.PhieuMoLaiResponse;
-import com.DATN.PhanAnhSuCoDoThi.entity.KetQuaXuLyEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.PhieuMoLaiEntity;
+import com.DATN.PhanAnhSuCoDoThi.entity.*;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiMoLai;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuMoLaiMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.KetQuaXuLyRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.PhieuMoLaiRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.SucoRepository;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuMoLai;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +28,8 @@ public class PhieuMoLaiService implements IPhieuMoLai {
     private final PhieuMoLaiRepository phieuMoLaiRepository;
     private final KetQuaXuLyRepository ketQuaXuLyRepository;
     private final PhieuMoLaiMapper phieuMoLaiMapper;
+    private final PhieuPhanCongRepository phieuPhanCongRepository;
+    private final SucoRepository sucoRepository;
 
     @Override
     public PhieuMoLaiResponse create(
@@ -46,11 +54,16 @@ public class PhieuMoLaiService implements IPhieuMoLai {
         );
 
         entity.setKetQuaXuLy(ketQuaXuLyEntity);
-
+        entity.setTrangThaiMoLai(TrangThaiMoLai.CHO_PHAN_HOI);
         entity.setLyDo(
                 request.getLyDo()
         );
 
+        PhieuPhanCongEntity phieuPhanCongEntity = entity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong();
+
+        phieuPhanCongEntity.setTrangThai(TrangThaiPhanCong.YEU_CAU_MO_LAI);
+
+        phieuPhanCongRepository.save(phieuPhanCongEntity);
         phieuMoLaiRepository.save(entity);
 
         return phieuMoLaiMapper.toResponse(entity);
@@ -104,5 +117,36 @@ public class PhieuMoLaiService implements IPhieuMoLai {
         return phieuMoLaiEntityList.stream()
                 .map(phieuMoLaiMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<PhieuMoLaiResponse> findAllByDonVi(String maDonVi, int page, int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
+        org.springframework.data.domain.Page<PhieuMoLaiEntity> pageResult = phieuMoLaiRepository.findAllByDonVi(maDonVi, pageable);
+        return PageResponse.of(pageResult.map(phieuMoLaiMapper::toResponse));
+    }
+
+    @Transactional
+    @Override
+    public PhieuMoLaiResponse duyetPhieuMoLai(String maPhieuMoLai, boolean isApproved, String lyDoTuChoi) {
+        PhieuMoLaiEntity entity = phieuMoLaiRepository.findById(maPhieuMoLai)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy phiếu mở lại"));
+
+        ChiTietPhanCongEntity chiTiet = entity.getKetQuaXuLy().getChiTietPhanCong();
+        PhieuPhanCongEntity phieuPhanCongEntity = chiTiet.getPhieuPhanCong();
+
+        if (isApproved) {
+            entity.setTrangThaiMoLai(TrangThaiMoLai.CHAP_NHAN);
+            chiTiet.setTrangThai(TrangThaiChiTietPhanCong.XU_LY_LAI);
+            phieuPhanCongEntity.setTrangThai(TrangThaiPhanCong.XU_LY_LAI);
+        } else {
+            entity.setTrangThaiMoLai(TrangThaiMoLai.TU_CHOI);
+            phieuPhanCongEntity.setTrangThai(TrangThaiPhanCong.KET_THUC);
+            entity.setLyDoTuChoi(lyDoTuChoi);
+        }
+
+        phieuPhanCongRepository.save(phieuPhanCongEntity);
+        phieuMoLaiRepository.save(entity);
+        return phieuMoLaiMapper.toResponse(entity);
     }
 }

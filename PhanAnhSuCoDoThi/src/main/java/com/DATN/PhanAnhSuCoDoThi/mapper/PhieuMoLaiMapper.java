@@ -13,6 +13,21 @@ public class PhieuMoLaiMapper {
                .maKetQuaXuLy(phieuMoLaiEntity.getKetQuaXuLy().getMaKetQua())
                .trangThaiMoLai(phieuMoLaiEntity.getTrangThaiMoLai())
                .thoiGianTao(phieuMoLaiEntity.getThoiGianTao())
+               .lyDoTuChoi(phieuMoLaiEntity.getLyDoTuChoi())
+               .maSuCo(phieuMoLaiEntity.getKetQuaXuLy() != null && 
+                       phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong() != null &&
+                       phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong() != null &&
+                       phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong().getSuCo() != null ? 
+                       phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong().getSuCo().getMaSuCo() : null)
+               .noiDungSuCo(phieuMoLaiEntity.getKetQuaXuLy() != null && 
+                            phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong() != null &&
+                            phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong() != null &&
+                            phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong().getSuCo() != null ? 
+                            phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong().getSuCo().getNoiDung() : null)
+               .maPhieuPhanCong(phieuMoLaiEntity.getKetQuaXuLy() != null && 
+                                phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong() != null &&
+                                phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong() != null ? 
+                                phieuMoLaiEntity.getKetQuaXuLy().getChiTietPhanCong().getPhieuPhanCong().getMaPhieuPhanCong() : null)
                .build();
    }
 }

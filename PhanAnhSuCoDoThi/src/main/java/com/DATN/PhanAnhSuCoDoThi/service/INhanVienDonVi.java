@@ -5,6 +5,6 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.NhanVienDonVi.NhanVienDonViRespons
 import java.util.List;
 
 public interface INhanVienDonVi {
-    List<NhanVienDonViResponse> findAllToPhanCong(String maDonVi);
+    List<NhanVienDonViResponse> findAllToPhanCong(String maTruongDonVi);
     List<NhanVienDonViResponse> findAllByDonVi(String maDonVi);
 }

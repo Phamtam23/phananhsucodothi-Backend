@@ -22,6 +22,8 @@ public class KetQuaXuLyMapper {
                 )
                 .thoiGianNop(entity.getThoiGianNop())
                 .noiDungThucHien(entity.getNoiDungThucHien())
+                .trangThai(entity.getTrangThai())
+                .lyDoTuChoi(entity.getLyDoTuChoi())
                 .build();
     }
 
@@ -39,6 +41,8 @@ public class KetQuaXuLyMapper {
                 )
                 .thoiGianNop(entity.getThoiGianNop())
                 .noiDungThucHien(entity.getNoiDungThucHien())
+                .trangThai(entity.getTrangThai())
+                .lyDoTuChoi(entity.getLyDoTuChoi())
                 .medias(null) // set sau
                 .build();
     }

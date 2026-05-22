@@ -26,9 +26,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@org.springframework.transaction.annotation.Transactional
 public class ChiTietPhanCongService implements IChiTietPhanCongService {
 
     private final ChiTietPhanCongRepository chiTietPhanCongRepository;
@@ -38,7 +40,7 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
     private final NhanVienDonViMapper nhanVienDonViMapper;
     private final PhieuPhanCongMapper  phieuPhanCongMapper;
     @Override
-    public PageResponse<ChiTietPhanCongEntity> FindAllByNhanVienXuLy(
+    public PageResponse<ChiTietPhanCongResponse> FindAllByNhanVienXuLy(
             String nhanVienXuLy,
             int page,
             int size
@@ -57,7 +59,14 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
                                 pageable
                         );
 
-        return PageResponse.of(pageResult);
+        Page<ChiTietPhanCongResponse> responsePage = pageResult.map(entity -> {
+
+            NhanVienDonViResponse nv = nhanVienDonViMapper.toResponsePC(entity.getNhanVienXuLy());
+            PhieuPhanCongResponse ppc = phieuPhanCongMapper.toResponse(entity.getPhieuPhanCong());
+            return chiTietPhanCongMapper.toResponse(entity, ppc, nv);
+        });
+
+        return PageResponse.of(responsePage);
     }
 
     @Override
@@ -86,7 +95,7 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
 
         ChiTietPhanCongEntity chiTietPhanCongEntity  = new ChiTietPhanCongEntity();
         chiTietPhanCongEntity.setMaChiTietPhanCong(IdGenerator.geMaChiTietPhanCong(createChiTietPhanCongRequest.getMaPhieuPhanCong(), maTruongDonVi));
-        chiTietPhanCongEntity.setTrangThai(TrangThaiChiTietPhanCong.DANGCHO);
+        chiTietPhanCongEntity.setTrangThai(TrangThaiChiTietPhanCong.DANG_CHO);
         chiTietPhanCongEntity.setThoiGianTao(LocalDateTime.now());
         chiTietPhanCongEntity.setPhieuPhanCong(phieuPhanCongEntity);
         chiTietPhanCongEntity.setNhanVienXuLy(nhanVienDonViEntity);
@@ -102,14 +111,25 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
     @Override
     public ChiTietPhanCongResponse update(UpdateChiTietPhanCongRequest updateChiTietPhanCongRequest, String maChiTietPhanCong) {
 
-        ChiTietPhanCongEntity chiTietPhanCongEntity = new ChiTietPhanCongEntity();
-        chiTietPhanCongEntity = chiTietPhanCongRepository.findById(maChiTietPhanCong)
+        ChiTietPhanCongEntity chiTietPhanCongEntity = chiTietPhanCongRepository.findById(maChiTietPhanCong)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy bản chi tiết phân công"));
 
         chiTietPhanCongEntity.setTrangThai(updateChiTietPhanCongRequest.getTrangThai());
+        chiTietPhanCongEntity = chiTietPhanCongRepository.save(chiTietPhanCongEntity);
 
-        return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity,null,null);
+        return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity,phieuPhanCongMapper.toResponse(chiTietPhanCongEntity.getPhieuPhanCong()),nhanVienDonViMapper.toResponsePC(chiTietPhanCongEntity.getNhanVienXuLy()));
 
+    }
+    
+    @Override
+    public List<ChiTietPhanCongResponse> FindAllByPhanCongId(String maPhieuPhanCong) {
+            List<ChiTietPhanCongEntity> list = chiTietPhanCongRepository.findByPhieuPhanCong_MaPhieuPhanCong(maPhieuPhanCong);
+
+        return list.stream().map(chiTietPhanCongEntity -> {
+            NhanVienDonViResponse nhanVienDonViResponse = nhanVienDonViMapper.toResponsePC(chiTietPhanCongEntity.getNhanVienXuLy());
+            PhieuPhanCongResponse phieuPhanCongResponse = phieuPhanCongMapper.toResponse(chiTietPhanCongEntity.getPhieuPhanCong());
+            return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity, phieuPhanCongResponse, nhanVienDonViResponse);
+        }).collect(java.util.stream.Collectors.toList());
     }
 
 }

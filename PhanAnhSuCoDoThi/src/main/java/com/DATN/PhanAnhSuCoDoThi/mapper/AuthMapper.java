@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthMapper {
 
-    public AuthResponse toResponse(TaikhoanEntity tk, String token) {
+    public AuthResponse toResponse(TaikhoanEntity tk, String token, String role) {
         if (tk == null) return null;
 
         return AuthResponse.builder()
@@ -19,6 +19,7 @@ public class AuthMapper {
                 .cccd(tk.getCccd())
                 .diaChi(tk.getDiaChi())
                 .anhDaiDien(tk.getAnhDaiDien())
+                .role(role)
                 .build();
     }
 }

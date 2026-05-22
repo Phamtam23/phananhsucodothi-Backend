@@ -15,8 +15,6 @@ public class CreateChiDaoRequest {
 
     private String maChiTietPhanCong;
 
-    private String maTruongDonVi;
-
     private String noiDung;
 
     private LocalDate ngayChiDao;

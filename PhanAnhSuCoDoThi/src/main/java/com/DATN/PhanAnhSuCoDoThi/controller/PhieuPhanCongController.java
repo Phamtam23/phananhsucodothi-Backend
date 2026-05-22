@@ -8,6 +8,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCResponse;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDonViRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class PhieuPhanCongController {
 
     private final IPhieuPhanCong phieuPhanCongService;
+    private final NhanVienDonViRepository nhanVienDonViRepository;
 
     @PostMapping
     public ApiSuccessResponse<List<PhieuPhanCongResponse>> create(
@@ -56,7 +58,10 @@ public class PhieuPhanCongController {
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        String maDonVi = SecurityUtils.getCurrentRefMa();
+        String maNhanVien = SecurityUtils.getCurrentRefMa();
+        String maDonVi = nhanVienDonViRepository.findById(maNhanVien)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin nhân viên đơn vị"))
+                .getDonVi().getMaDonViXuLy();
 
         return ApiSuccessResponse.ok(
                 phieuPhanCongService.findAllByDonVi(maDonVi, page, size)

@@ -38,4 +38,12 @@ public class KetQuaXuLyController {
             @RequestBody UpdateKetQuaXuLyRequest request) {
         return ApiSuccessResponse.ok(ketQuaXuLyService.update(request));
     }
+
+    @PutMapping("/duyet/{maKetQua}")
+    public ApiSuccessResponse<KetQuaXuLyDetailResponse> duyetKetQua(
+            @PathVariable String maKetQua,
+            @RequestParam boolean isApproved,
+            @RequestParam(required = false) String lyDoTuChoi) {
+        return ApiSuccessResponse.ok(ketQuaXuLyService.duyetKetQua(maKetQua, isApproved, lyDoTuChoi));
+    }
 }

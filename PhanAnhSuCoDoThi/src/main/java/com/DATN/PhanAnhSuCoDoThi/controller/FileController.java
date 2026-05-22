@@ -16,10 +16,10 @@ import java.util.Map;
 public class FileController {
 
     private final FileStorageService fileStorageService;
-    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("/upload")  // ← bỏ consumes
     public ResponseEntity<?> upload(
-            @RequestPart("files") List<MultipartFile> files,
-            @RequestParam String type) {
+            @RequestParam("files") List<MultipartFile> files,  // ← @RequestParam
+            @RequestParam(value = "type", defaultValue = "suco") String type) {
         List<String> urls = fileStorageService.saveFiles(files, type);
         return ResponseEntity.ok(Map.of(
                 "status", 200,

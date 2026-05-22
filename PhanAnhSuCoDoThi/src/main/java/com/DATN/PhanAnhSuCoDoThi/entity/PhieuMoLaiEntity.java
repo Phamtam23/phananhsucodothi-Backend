@@ -34,4 +34,7 @@ public class PhieuMoLaiEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "trangThaiMoLai", length = 20)
     private TrangThaiMoLai trangThaiMoLai;
+
+    @Column(name = "lyDoTuChoi", columnDefinition = "TEXT")
+    private String lyDoTuChoi;
 }

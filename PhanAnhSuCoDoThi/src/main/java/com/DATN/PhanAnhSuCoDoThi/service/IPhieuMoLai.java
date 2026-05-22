@@ -11,4 +11,6 @@ public interface IPhieuMoLai {
     PhieuMoLaiResponse update(UpdatePhieuMoLai  updatePhieuMoLai);
     PhieuMoLaiResponse findById(String maPhieuMoLai);
     List<PhieuMoLaiResponse> findAllByPhanCong(String maNguoiDan, String maPhanCong);
+    com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse<PhieuMoLaiResponse> findAllByDonVi(String maDonVi, int page, int size);
+    PhieuMoLaiResponse duyetPhieuMoLai(String maPhieuMoLai, boolean isApproved, String lyDoTuChoi);
 }

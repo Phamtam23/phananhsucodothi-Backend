@@ -16,4 +16,6 @@ public interface IKetQuaXuLyService {
   KetQuaXuLyDetailResponse findById(String maKetQuaXuLyId);
 
   KetQuaXuLyDetailResponse update(UpdateKetQuaXuLyRequest updateKetQuaXuLyRequest);
+
+  KetQuaXuLyDetailResponse duyetKetQua(String maKetQua, boolean isApproved, String lyDoTuChoi);
  }

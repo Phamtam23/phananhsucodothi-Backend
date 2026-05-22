@@ -14,4 +14,5 @@ public class AuthResponse {
     private String cccd;
     private String diaChi;
     private String anhDaiDien;
+    private String role;
 }

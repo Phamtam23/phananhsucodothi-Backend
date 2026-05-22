@@ -21,8 +21,11 @@ public class SucoMapper {
 
         return SucoSummaryResponse.builder()
                 .maSuCo(e.getMaSuCo())
+                .tieuDe(e.getTieuDe())
                 .noiDung(e.getNoiDung())
                 .diaDiem(e.getDiaDiem())
+                .diemSpam(e.getDiemSpam())
+                .lyDoSpam(e.getLyDoSpam())
                 .trangThai(e.getTrangThai() != null ? e.getTrangThai().name() : null)
                 .thoiGianTao(e.getThoiGianTao())
                 .thumbnail(getThumbnail(medias))

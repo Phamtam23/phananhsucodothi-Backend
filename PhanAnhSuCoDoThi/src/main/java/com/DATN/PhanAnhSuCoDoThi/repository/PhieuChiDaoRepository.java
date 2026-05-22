@@ -13,4 +13,6 @@ public interface PhieuChiDaoRepository extends JpaRepository<PhieuChiDaoEntity, 
 
     Page<PhieuChiDaoEntity>
     findByTruongDonVi_MaNhanVien(String maNhanVien, Pageable pageable);
+
+    Page<PhieuChiDaoEntity> findByChiTietPhanCong_MaChiTietPhanCongAndDeletedAtIsNull(String maChiTietPhanCong, Pageable pageable);
 }

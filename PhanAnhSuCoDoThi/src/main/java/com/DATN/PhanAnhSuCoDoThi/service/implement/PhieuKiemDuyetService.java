@@ -5,6 +5,8 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuKiemDuyetResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDieuPhoiEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuKiemDuyetEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiKiemDuyet;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuKiemDuyetMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDieuPhoiRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.PhieuKiemDuyetRepository;
@@ -41,7 +43,14 @@ public class PhieuKiemDuyetService implements IPhieuKiemDuyetService {
         entity.setLyDoTuChoi(request.getLyDoTuChoi());
         entity.setThoiGianTao(LocalDateTime.now());
         entity.setSuCo(suCo);
-
+        if(entity.getTrangThai()== TrangThaiKiemDuyet.DUYET)
+        {
+            suCo.setTrangThai(TrangThaiSuCo.DA_TIEP_NHAN);
+        }
+        else
+        {
+            suCo.setTrangThai(TrangThaiSuCo.TU_CHOI);
+        }
         phieuKiemDuyetRepository.save(entity);
 
         return phieuKiemDuyetMapper.toResponse(entity);

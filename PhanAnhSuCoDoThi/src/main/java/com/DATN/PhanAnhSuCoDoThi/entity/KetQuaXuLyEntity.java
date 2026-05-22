@@ -31,4 +31,7 @@ public class KetQuaXuLyEntity {
 
     @Column(name = "noiDungThucHien", columnDefinition = "TEXT")
     private String noiDungThucHien;
+
+    @Column(name = "lyDoTuChoi", columnDefinition = "TEXT")
+    private String lyDoTuChoi;
 }

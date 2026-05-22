@@ -34,6 +34,8 @@ public class SucoService implements ISucoService {
     private final SucoMapper sucoMapper;
     private final NguoidanRepository nguoidanRepository;
     private final PhieuPhanLoaiRepository phieuPhanLoaiRepository;
+    private final GeminiService geminiService;
+    private final SpamDetectionService spamDetectionService;
     @Override
     public PageResponse<SucoSummaryResponse> findAll(int page, int size) {
 
@@ -107,6 +109,7 @@ public class SucoService implements ISucoService {
         NguoidanEntity nguoiDan =nguoidanRepository.findById (maNguoiDan)
                 .orElseThrow(() -> new RuntimeException("Người dân không tồn tại"));
 
+        String tieuDe = geminiService.generateTitle(request.getNoiDung(),request.getDiaDiem());
         // 2. tạo sự cố
         SucoEntity suco = new SucoEntity();
         suco.setMaSuCo(generateMaSuCo(maNguoiDan));
@@ -115,6 +118,7 @@ public class SucoService implements ISucoService {
         suco.setViDo(request.getViDo());
         suco.setDiaDiem(request.getDiaDiem());
         suco.setNoiDung(request.getNoiDung());
+        suco.setTieuDe(tieuDe);
 
         // default
         suco.setTrangThai(TrangThaiSuCo.CHO_TIEP_NHAN);
@@ -148,6 +152,9 @@ public class SucoService implements ISucoService {
 
             tepSuCoRepository.saveAll(tepList);
         }
+
+        // Kích hoạt phân tích spam bất đồng bộ bằng AI
+        spamDetectionService.analyzeSpamAsync(suco.getMaSuCo());
 
         // 5. trả response
         return sucoMapper.toDetail(suco, tepList, getPhanLoaiSuco(suco.getMaSuCo()));

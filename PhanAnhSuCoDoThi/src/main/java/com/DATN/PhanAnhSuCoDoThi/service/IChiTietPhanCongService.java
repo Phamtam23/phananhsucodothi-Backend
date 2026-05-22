@@ -8,7 +8,7 @@ import com.DATN.PhanAnhSuCoDoThi.entity.ChiTietPhanCongEntity;
 
 public interface IChiTietPhanCongService {
 
-    PageResponse<ChiTietPhanCongEntity> FindAllByNhanVienXuLy(String nhanVienXuLy, int page, int size);
+    PageResponse<ChiTietPhanCongResponse> FindAllByNhanVienXuLy(String nhanVienXuLy, int page, int size);
 
     ChiTietPhanCongResponse  FindById(String maChiTietPhanCong);
 
@@ -16,4 +16,5 @@ public interface IChiTietPhanCongService {
 
     ChiTietPhanCongResponse update(UpdateChiTietPhanCongRequest UpdateChiTietPhanCongRequest, String maChiTietPhanCong);
 
+    java.util.List<ChiTietPhanCongResponse> FindAllByPhanCongId(String maPhieuPhanCong);
 }

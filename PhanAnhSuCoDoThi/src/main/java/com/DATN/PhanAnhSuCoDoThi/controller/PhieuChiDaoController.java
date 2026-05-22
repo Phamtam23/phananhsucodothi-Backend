@@ -5,6 +5,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuChiDao.CreateChiDaoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuChiDao.UpdateChiDaoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuChiDaoResponse;
+import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuChiDaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,9 @@ public class PhieuChiDaoController {
     public ApiSuccessResponse<PhieuChiDaoResponse> create(
             @Valid @RequestBody CreateChiDaoRequest request
     ) {
+        String maTruongDonVi = SecurityUtils.getCurrentRefMa();
         return ApiSuccessResponse.created(
-                phieuChiDaoService.create(request)
+                phieuChiDaoService.create(request, maTruongDonVi)
         );
     }
 

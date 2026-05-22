@@ -17,8 +17,8 @@ import java.util.List;
 @RequestMapping("/phieu-mo-lai")
 @RequiredArgsConstructor
 public class PhieuMoLaiController {
-
     private final IPhieuMoLai phieuMoLaiService;
+    private final com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDonViRepository nhanVienDonViRepository;
 
     // Tạo phiếu mở lại
     @PostMapping
@@ -58,6 +58,32 @@ public class PhieuMoLaiController {
         String maNguoiDan = SecurityUtils.getCurrentRefMa();
         return ResponseEntity.ok(
                 phieuMoLaiService.findAllByPhanCong(maNguoiDan,maChiTietPhanCong)
+        );
+    }
+
+    @GetMapping("/don-vi")
+    public com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse<com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse<PhieuMoLaiResponse>> getByDonVi(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        String maNhanVien = SecurityUtils.getCurrentRefMa();
+        String maDonVi = nhanVienDonViRepository.findById(maNhanVien)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin nhân viên đơn vị"))
+                .getDonVi().getMaDonViXuLy();
+
+        return com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse.ok(
+                phieuMoLaiService.findAllByDonVi(maDonVi, page, size)
+        );
+    }
+
+    @PutMapping("/duyet/{maPhieuMoLai}")
+    public com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse<PhieuMoLaiResponse> duyetPhieuMoLai(
+            @PathVariable String maPhieuMoLai,
+            @RequestParam boolean isApproved,
+            @RequestParam(required = false) String lyDoTuChoi
+    ) {
+        return com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse.ok(
+                phieuMoLaiService.duyetPhieuMoLai(maPhieuMoLai, isApproved, lyDoTuChoi)
         );
     }
 }

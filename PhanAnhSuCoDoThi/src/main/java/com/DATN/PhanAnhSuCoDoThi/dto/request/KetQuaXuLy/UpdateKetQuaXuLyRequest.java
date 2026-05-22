@@ -21,4 +21,5 @@ public class UpdateKetQuaXuLyRequest {
 
     private List<String> mediaUrls;
 
+    private String lyDoTuChoi;
 }

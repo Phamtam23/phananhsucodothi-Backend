@@ -33,4 +33,14 @@ public interface PhieuMoLaiRepository extends JpaRepository<PhieuMoLaiEntity,Str
             @Param("maPhieu") String maPhieu
     );
 
+    @Query("""
+    SELECT pml
+    FROM PhieuMoLaiEntity pml
+    WHERE pml.ketQuaXuLy.chiTietPhanCong.phieuPhanCong.donViXuLy.maDonViXuLy = :maDonVi
+    ORDER BY pml.thoiGianTao DESC
+    """)
+    org.springframework.data.domain.Page<PhieuMoLaiEntity> findAllByDonVi(
+            @Param("maDonVi") String maDonVi,
+            org.springframework.data.domain.Pageable pageable
+    );
 }

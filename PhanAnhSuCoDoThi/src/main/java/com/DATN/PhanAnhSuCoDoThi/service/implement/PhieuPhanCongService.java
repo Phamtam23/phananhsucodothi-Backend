@@ -6,6 +6,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.*;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLyDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.*;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 import com.DATN.PhanAnhSuCoDoThi.mapper.KetQuaXuLyMapper;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuPhanCongMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.*;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@org.springframework.transaction.annotation.Transactional
 public class PhieuPhanCongService implements IPhieuPhanCong {
 
     private final PhieuPhanCongRepository phieuPhanCongRepository;
@@ -46,6 +48,9 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
                 .findById(request.getMaSuCo())
                 .orElseThrow(() ->
                         new RuntimeException("Không tìm thấy sự cố"));
+
+        sucoEntity.setTrangThai(TrangThaiSuCo.DANG_XU_LY);
+        sucoRepository.save(sucoEntity);
 
         NhanVienDieuPhoiEntity nhanVienDieuPhoiEntity =
                 nhanVienDieuPhoiRepository
@@ -309,8 +314,4 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
                         )
                 ));
     }
-
-
-
-
 }

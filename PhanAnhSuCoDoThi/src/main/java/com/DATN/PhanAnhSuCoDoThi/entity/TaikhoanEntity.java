@@ -56,6 +56,9 @@ public class TaikhoanEntity {
     @Column(name = "daXacThucEmail")
     private Boolean daXacThucEmail;
 
+    @Column(name = "trangThai", length = 20)
+    private String trangThai = "HOAT_DONG";
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "TAIKHOAN_QUYEN",

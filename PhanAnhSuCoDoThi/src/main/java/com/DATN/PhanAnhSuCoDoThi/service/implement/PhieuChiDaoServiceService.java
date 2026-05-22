@@ -24,17 +24,17 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class PhieuChiDaoServiceService implements IPhieuChiDaoService {
-    PhieuChiDaoRepository phieuChiDaoRepository;
-    PhieuChiDaoMapper  phieuChiDaoMapper;
-    NhanVienDonViRepository nhanVienDonViRepository;
-    ChiTietPhanCongRepository chiTietPhanCongRepository;
+    private final PhieuChiDaoRepository phieuChiDaoRepository;
+    private final PhieuChiDaoMapper  phieuChiDaoMapper;
+    private final NhanVienDonViRepository nhanVienDonViRepository;
+    private final ChiTietPhanCongRepository chiTietPhanCongRepository;
 
     @Override
-    public PhieuChiDaoResponse create(CreateChiDaoRequest createChiDaoRequest) {
+    public PhieuChiDaoResponse create(CreateChiDaoRequest createChiDaoRequest,String maTruongDonVi) {
         ChiTietPhanCongEntity chiTietPhanCongEntity = chiTietPhanCongRepository.findById(createChiDaoRequest.getMaChiTietPhanCong())
                 .orElseThrow(() -> new RuntimeException("Không timg thấy chi tiết phân công"));
 
-        NhanVienDonViEntity truongDonViEntity = nhanVienDonViRepository.findById(createChiDaoRequest.getMaTruongDonVi())
+        NhanVienDonViEntity truongDonViEntity = nhanVienDonViRepository.findById(maTruongDonVi)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy trưởng đơn vị"));
 
         PhieuChiDaoEntity phieuChiDaoEntity = new PhieuChiDaoEntity();
@@ -77,7 +77,7 @@ public class PhieuChiDaoServiceService implements IPhieuChiDaoService {
     @Override
     public Page<PhieuChiDaoResponse> findByChiTietPhanCong(String maChiTietPhanCong, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PhieuChiDaoEntity> pageResult = phieuChiDaoRepository.findByTruongDonVi_MaNhanVien(
+        Page<PhieuChiDaoEntity> pageResult = phieuChiDaoRepository.findByChiTietPhanCong_MaChiTietPhanCongAndDeletedAtIsNull(
                 maChiTietPhanCong,
                 pageable);
 

@@ -13,4 +13,6 @@ public interface ChiTietPhanCongRepository extends JpaRepository<ChiTietPhanCong
             String maNhanVien,
             Pageable pageable
     );
+
+    java.util.List<ChiTietPhanCongEntity> findByPhieuPhanCong_MaPhieuPhanCong(String maPhieuPhanCong);
 }

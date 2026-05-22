@@ -11,8 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateChiTietPhanCongRequest {
-
-    private String maChiTietPhanCong;
-
     private TrangThaiChiTietPhanCong trangThai;
 }

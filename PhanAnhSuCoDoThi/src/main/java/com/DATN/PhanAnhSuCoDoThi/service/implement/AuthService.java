@@ -74,7 +74,7 @@ public class AuthService implements IAuthService {
                 null
         );
 
-        return authMapper.toResponse(taikhoan, token);
+        return authMapper.toResponse(taikhoan, token, "R_USER");
 
     }
 
@@ -148,6 +148,6 @@ public class AuthService implements IAuthService {
                 refMa
         );
 
-        return authMapper.toResponse(taikhoan, token);
+        return authMapper.toResponse(taikhoan, token, role);
     }
 }

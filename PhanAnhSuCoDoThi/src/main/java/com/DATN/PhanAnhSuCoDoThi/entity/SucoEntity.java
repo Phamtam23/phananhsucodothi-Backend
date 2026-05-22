@@ -43,6 +43,9 @@ public class SucoEntity {
     @Column(name = "noiDung", columnDefinition = "TEXT")
     private String noiDung;
 
+    @Column(name = "tieuDe", columnDefinition = "nvarchar(500)")
+    private String tieuDe;
+
     @Column(name = "diemSpam")
     private Integer diemSpam;
 

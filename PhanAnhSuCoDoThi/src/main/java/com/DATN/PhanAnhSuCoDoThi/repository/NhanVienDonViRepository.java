@@ -25,7 +25,7 @@ public interface NhanVienDonViRepository extends JpaRepository<NhanVienDonViEnti
             nvcv.ngayKetThuc IS NULL
             OR nvcv.ngayKetThuc > CURRENT_DATE
         )
-        AND cv.tenChucVu = 'NHANVIEN'
+        AND cv.maChucVu = 'C_NDVXL000'
 """)
     List<NhanVienDonViEntity> findNhanVienDangHoatDong(
             @Param("maDonVi") String maDonVi

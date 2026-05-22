@@ -7,13 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-/**
- * NhanVienDonVi - Nhân viên thuộc đơn vị xử lý
- * Bảng: NHANVIEN_DONVI
- * PK: maNhanVien VARCHAR(10)
- * FK: taiKhoan → TAIKHOAN (1-1)
- * FK: donVi    → DONVIXULY (N-1)
- */
 @Entity
 @Table(name = "NHANVIEN_DONVI")
 @Getter
