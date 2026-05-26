@@ -9,4 +9,6 @@ import java.util.List;
 public interface TepKetQuaRepository extends JpaRepository<TepKetQuaEntity,String> {
 
     List<TepKetQuaEntity> findAllByKetQua_MaKetQuaIn(List<String> maKetQuas);
+
+    List<TepKetQuaEntity> findAllByKetQua_MaKetQua(String maKetQua);
 }

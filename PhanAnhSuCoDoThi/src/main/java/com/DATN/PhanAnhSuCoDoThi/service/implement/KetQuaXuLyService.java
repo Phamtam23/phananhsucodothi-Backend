@@ -13,18 +13,21 @@ import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.mapper.KetQuaXuLyMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.ChiTietPhanCongRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.KetQuaXuLyRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository;
 import com.DATN.PhanAnhSuCoDoThi.service.IKetQuaXuLyService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import com.DATN.PhanAnhSuCoDoThi.entity.TepKetQuaEntity;
 import com.DATN.PhanAnhSuCoDoThi.repository.TepKetQuaRepository;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.MediaResponse;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -35,12 +38,12 @@ public class KetQuaXuLyService implements IKetQuaXuLyService {
     private final KetQuaXuLyRepository ketQuaXuLyRepository;
     private final ChiTietPhanCongRepository chiTietPhanCongRepository;
     private final KetQuaXuLyMapper ketQuaXuLyMapper;
-    private final com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository phieuPhanCongRepository;
+    private final PhieuPhanCongRepository phieuPhanCongRepository;
     private final TepKetQuaRepository tepKetQuaRepository;
-
+    private final TepKetQuaService tepKetQuaService;
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
-    public List<KetQuaXuLySummaryResponse> findByChiTietPhanCong(
+    @Transactional(readOnly = true)
+    public List<KetQuaXuLyDetailResponse> findByChiTietPhanCong(
             String maChiTietPhanCong
     ) {
 
@@ -54,38 +57,57 @@ public class KetQuaXuLyService implements IKetQuaXuLyService {
             return List.of();
         }
 
-        List<String> maKetQuas = entities.stream()
+        List<KetQuaXuLyDetailResponse> ketQuaXuLyDetailResponses = entities.stream()
+                .map(kq -> {
+                            KetQuaXuLyDetailResponse res = ketQuaXuLyMapper.toDetailResponse(kq);
+                            if (res != null)
+                                res.setMedias(tepKetQuaService.getMediasByMaKetQua(kq.getMaKetQua()));
+                            return res;
+                }).toList();
+
+
+        return ketQuaXuLyDetailResponses;
+    }
+
+    public Map<String, List<KetQuaXuLyDetailResponse>> findByPhanCong(
+           List<String> maPhanCongs
+    ) {
+        List<KetQuaXuLyEntity> ketQuaXuLyEntities = ketQuaXuLyRepository.findByPhieuPhanCongIn(maPhanCongs);
+        if (ketQuaXuLyEntities.isEmpty()) {
+            return Map.of();
+        }
+
+        List<String> maketQuas = ketQuaXuLyEntities.stream()
                 .map(KetQuaXuLyEntity::getMaKetQua)
                 .toList();
 
-        List<TepKetQuaEntity> teps =
-                tepKetQuaRepository.findAllByKetQua_MaKetQuaIn(maKetQuas);
+        Map<String,List<MediaResponse>> mediaMap = tepKetQuaService.getMediasByKetQuas(maketQuas);
 
-        Map<String, List<MediaResponse>> tepTheoKetQua = teps.stream()
+        return ketQuaXuLyEntities.stream()
                 .collect(Collectors.groupingBy(
-                        t -> t.getKetQua().getMaKetQua(),
+
+                        entity -> entity.getChiTietPhanCong().getPhieuPhanCong().getMaPhieuPhanCong(),
+
                         Collectors.mapping(
-                                t -> MediaResponse.builder()
-                                        .url(t.getUrl())
-                                        .loai(t.getLoai())
-                                        .build(),
+
+                                entity -> {
+                                    KetQuaXuLyDetailResponse response = ketQuaXuLyMapper.toDetailResponse(entity);
+                                    response.setMedias(
+                                            mediaMap != null
+                                                    ? mediaMap.getOrDefault(entity.getMaKetQua(), Collections.emptyList())
+                                                    : Collections.emptyList()
+                                    );
+                                    return response;
+                                },
+
                                 Collectors.toList()
                         )
                 ));
-
-        return entities.stream()
-                .map(entity -> {
-                    KetQuaXuLySummaryResponse res = ketQuaXuLyMapper.toSummaryResponse(entity);
-                    if (res != null) {
-                        res.setMedias(tepTheoKetQua.getOrDefault(entity.getMaKetQua(), List.of()));
-                    }
-                    return res;
-                })
-                .toList();
     }
 
+
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public KetQuaXuLyDetailResponse create(
             CreateKetQuaXuLyRequest request
     ) {

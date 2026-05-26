@@ -11,7 +11,7 @@ import java.util.Set;
 
 public interface PhieuDanhGiaRepository extends JpaRepository<PhieuDanhGiaEntity, String> {
 
-    List<PhieuDanhGiaEntity> findByKetQuaXuLy_MaKetQua(String maKetQuaXuLy);
+    PhieuDanhGiaEntity findByKetQuaXuLy_MaKetQua(String maKetQuaXuLy);
 
     @Query("""
     SELECT pdg.ketQuaXuLy.chiTietPhanCong.phieuPhanCong.maPhieuPhanCong
@@ -22,5 +22,28 @@ public interface PhieuDanhGiaRepository extends JpaRepository<PhieuDanhGiaEntity
     Set<String> findMaPhieuDaDanhGia(
             @Param("maNguoiDan") String maNguoiDan,
             @Param("maPhieus") List<String> maPhieus
+    );
+
+    @Query("""
+    SELECT pdg.ketQuaXuLy.maKetQua
+    FROM PhieuDanhGiaEntity pdg
+    WHERE pdg.nguoiDan.maNguoiDan = :maNguoiDan
+""")
+    Set<String> findMaKetQuaDaDanhGia(
+            @Param("maNguoiDan") String maNguoiDan
+    );
+
+    @Query("""
+    SELECT pd FROM PhieuDanhGiaEntity pd
+    JOIN pd.ketQuaXuLy kq
+    JOIN kq.chiTietPhanCong ctpc
+    JOIN ctpc.phieuPhanCong pc
+    WHERE pc.maPhieuPhanCong IN :maPhanCongs
+    AND pd.nguoiDan.maNguoiDan = :maNguoiDan
+    AND kq.trangThai = com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiKetQua.DA_DUYET
+""")
+    List<PhieuDanhGiaEntity> findByPhanCongsAndNguoiDan(
+            @Param("maPhanCongs") List<String> maPhanCongs,
+            @Param("maNguoiDan") String maNguoiDan
     );
 }

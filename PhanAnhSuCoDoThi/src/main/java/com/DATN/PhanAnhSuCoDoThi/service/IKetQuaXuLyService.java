@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface IKetQuaXuLyService {
 
-  List<KetQuaXuLySummaryResponse> findByChiTietPhanCong(String maChiTietPhanCong);
+  List<KetQuaXuLyDetailResponse> findByChiTietPhanCong(String maChiTietPhanCong);
 
   KetQuaXuLyDetailResponse create(CreateKetQuaXuLyRequest createKetQuaXuLyRequest);
 

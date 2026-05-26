@@ -24,6 +24,8 @@ public class SucoMapper {
                 .tieuDe(e.getTieuDe())
                 .noiDung(e.getNoiDung())
                 .diaDiem(e.getDiaDiem())
+                .kinhDo(e.getKinhDo())
+                .viDo(e.getViDo())
                 .diemSpam(e.getDiemSpam())
                 .lyDoSpam(e.getLyDoSpam())
                 .trangThai(e.getTrangThai() != null ? e.getTrangThai().name() : null)

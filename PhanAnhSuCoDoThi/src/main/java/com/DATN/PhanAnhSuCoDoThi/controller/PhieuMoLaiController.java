@@ -20,13 +20,13 @@ public class PhieuMoLaiController {
     private final IPhieuMoLai phieuMoLaiService;
     private final com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDonViRepository nhanVienDonViRepository;
 
-    // Tạo phiếu mở lại
     @PostMapping
     public ResponseEntity<PhieuMoLaiResponse> create(
             @RequestBody CreatePhieuMoLaiRequest request
     ) {
+        String maNguoiDan = SecurityUtils.getCurrentRefMa();
         return ResponseEntity.ok(
-                phieuMoLaiService.create(request)
+                phieuMoLaiService.create(request,maNguoiDan)
         );
     }
 
@@ -52,7 +52,7 @@ public class PhieuMoLaiController {
 
     // Lấy danh sách phiếu mở lại theo chi tiết phân công
     @GetMapping("/phan-cong/{phanCong}")
-    public ResponseEntity<List<PhieuMoLaiResponse>> findAllByPhanCong(
+    public ResponseEntity<PhieuMoLaiResponse> findAllByPhanCong(
             @PathVariable String maChiTietPhanCong
     ) {
         String maNguoiDan = SecurityUtils.getCurrentRefMa();

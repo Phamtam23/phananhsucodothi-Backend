@@ -3,47 +3,80 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuDanhGiaRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuDanhGiaResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.KetQuaXuLyEntity;
+import com.DATN.PhanAnhSuCoDoThi.entity.NguoidanEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuDanhGiaEntity;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuDanhGiaMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.KetQuaXuLyRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.NguoidanRepository;
 import com.DATN.PhanAnhSuCoDoThi.repository.PhieuDanhGiaRepository;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuDanhGiaService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class PhieuDanhGiaService implements IPhieuDanhGiaService {
 
-    PhieuDanhGiaRepository phieuDanhGiaRepository;
-    PhieuDanhGiaMapper phieuDanhGiaMapper;
-    KetQuaXuLyRepository ketQuaXuLyRepository;
+    private final PhieuDanhGiaRepository phieuDanhGiaRepository;
+    private final PhieuDanhGiaMapper phieuDanhGiaMapper;
+    private final KetQuaXuLyRepository ketQuaXuLyRepository;
+    private final NguoidanRepository nguoidanRepository;
 
     @Override
-    public PhieuDanhGiaResponse create(PhieuDanhGiaRequest phieuDanhGiaRequest) {
+    public PhieuDanhGiaResponse create(PhieuDanhGiaRequest phieuDanhGiaRequest, String maNguoiDan) {
 
-        KetQuaXuLyEntity ketQuaXuLyEntity = ketQuaXuLyRepository.findById(phieuDanhGiaRequest.getMaKetQuaXuLy())
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy kết quả xử lý"));
+        try {
 
-        PhieuDanhGiaEntity phieuDanhGiaEntity = new PhieuDanhGiaEntity();
-        phieuDanhGiaEntity.setMaDanhGia(IdGenerator.generateMaPhieuDanhGia(phieuDanhGiaRequest.getMaKetQuaXuLy()));
-        phieuDanhGiaEntity.setKetQuaXuLy(ketQuaXuLyEntity);
-        phieuDanhGiaEntity.setMucDoHaiLong(phieuDanhGiaEntity.getMucDoHaiLong());
-        phieuDanhGiaRepository.save(phieuDanhGiaEntity);
+            KetQuaXuLyEntity ketQuaXuLyEntity = ketQuaXuLyRepository
+                    .findById(phieuDanhGiaRequest.getMaKetQuaXuLy())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy kết quả xử lý"));
 
-        return phieuDanhGiaMapper.toResponse(phieuDanhGiaEntity);
+            PhieuDanhGiaEntity phieuDanhGiaEntity = new PhieuDanhGiaEntity();
+
+            phieuDanhGiaEntity.setMaDanhGia(
+                    IdGenerator.generateMaPhieuDanhGia(
+                            phieuDanhGiaRequest.getMaKetQuaXuLy()
+                    )
+            );
+
+            phieuDanhGiaEntity.setKetQuaXuLy(ketQuaXuLyEntity);
+
+            phieuDanhGiaEntity.setMucDoHaiLong(
+                    phieuDanhGiaRequest.getMucDoHaiLong()
+            );
+
+            phieuDanhGiaEntity.setThoiGianTao(LocalDateTime.now());
+            NguoidanEntity nguoiDan = nguoidanRepository
+                    .findById(maNguoiDan)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy người dân"));
+
+            phieuDanhGiaEntity.setNguoiDan(nguoiDan);
+            phieuDanhGiaRepository.save(phieuDanhGiaEntity);
+
+            return phieuDanhGiaMapper.toResponse(phieuDanhGiaEntity);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @Override
-    public List<PhieuDanhGiaResponse> findByKetQuaXuLy(String maKetQuaXyLy) {
-        return phieuDanhGiaRepository
-                .findByKetQuaXuLy_MaKetQua(maKetQuaXyLy)
-                .stream()
-                .map(phieuDanhGiaMapper::toResponse)
-                .toList();
+    public PhieuDanhGiaResponse findByKetQuaXuLy(String maKetQuaXyLy) {
+
+        PhieuDanhGiaEntity phieuDanhGiaEntity = phieuDanhGiaRepository
+                .findByKetQuaXuLy_MaKetQua(maKetQuaXyLy);
+
+        return PhieuDanhGiaResponse.builder()
+                .mucDoDanhGia(phieuDanhGiaEntity.getMucDoHaiLong())
+                .maXuLyKetQua(phieuDanhGiaEntity.getKetQuaXuLy().getMaKetQua())
+                .build();
+
+
     }
 
 }

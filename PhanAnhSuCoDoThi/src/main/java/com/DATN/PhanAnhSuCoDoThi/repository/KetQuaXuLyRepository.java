@@ -16,9 +16,14 @@ public interface KetQuaXuLyRepository extends JpaRepository<KetQuaXuLyEntity,Str
     );
 
     @Query("""
-        SELECT k FROM KetQuaXuLyEntity k
-        LEFT JOIN FETCH k.chiTietPhanCong ct
-        WHERE ct.phieuPhanCong.maPhieuPhanCong IN :maPhieus
-    """)
-    List<KetQuaXuLyEntity> findByPhieuPhanCongIn(@Param("maPhieus") List<String> maPhieus);
+    SELECT kq FROM KetQuaXuLyEntity kq
+    JOIN kq.chiTietPhanCong ctpc
+    JOIN ctpc.phieuPhanCong pc
+    WHERE pc.maPhieuPhanCong IN :maPhanCongs
+""")
+    List<KetQuaXuLyEntity> findByPhieuPhanCongIn(
+            @Param("maPhanCongs") List<String> maPhanCongs
+    );
+
+
 }

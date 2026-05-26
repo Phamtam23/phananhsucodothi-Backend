@@ -9,10 +9,8 @@ import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiMoLai;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuMoLaiMapper;
-import com.DATN.PhanAnhSuCoDoThi.repository.KetQuaXuLyRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.PhieuMoLaiRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.SucoRepository;
+import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuPhanCongMapper;
+import com.DATN.PhanAnhSuCoDoThi.repository.*;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuMoLai;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import jakarta.transaction.Transactional;
@@ -29,11 +27,12 @@ public class PhieuMoLaiService implements IPhieuMoLai {
     private final KetQuaXuLyRepository ketQuaXuLyRepository;
     private final PhieuMoLaiMapper phieuMoLaiMapper;
     private final PhieuPhanCongRepository phieuPhanCongRepository;
+    private final NguoidanRepository  nguoidanRepository;
     private final SucoRepository sucoRepository;
 
     @Override
     public PhieuMoLaiResponse create(
-            CreatePhieuMoLaiRequest request
+            CreatePhieuMoLaiRequest request, String maNguoiDan
     ) {
 
         KetQuaXuLyEntity ketQuaXuLyEntity =
@@ -44,9 +43,13 @@ public class PhieuMoLaiService implements IPhieuMoLai {
                                         "Không tìm thấy kết quả xử lý"
                                 )
                         );
+        NguoidanEntity nguoiDan = nguoidanRepository
+                .findById(maNguoiDan)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dân"));
+
 
         PhieuMoLaiEntity entity = new PhieuMoLaiEntity();
-
+        entity.setNguoiDan(nguoiDan);
         entity.setMaPhieuMoLai(
                 IdGenerator.generateMaPhieuMoLai(
                         request.getMaKetQuaXuLy()
@@ -112,11 +115,9 @@ public class PhieuMoLaiService implements IPhieuMoLai {
     }
 
     @Override
-    public List<PhieuMoLaiResponse> findAllByPhanCong(String maNguoiDan,String maPhanCong) {
-        List<PhieuMoLaiEntity> phieuMoLaiEntityList = phieuMoLaiRepository.findAllByPhanCong(maNguoiDan, maPhanCong);
-        return phieuMoLaiEntityList.stream()
-                .map(phieuMoLaiMapper::toResponse)
-                .toList();
+    public PhieuMoLaiResponse findAllByPhanCong(String maNguoiDan,String maPhanCong) {
+        PhieuMoLaiEntity phieuMoLaiEntity = phieuMoLaiRepository.findAllByPhanCongSC(maNguoiDan, maPhanCong);
+        return phieuMoLaiMapper.toResponse(phieuMoLaiEntity);
     }
 
     @Override

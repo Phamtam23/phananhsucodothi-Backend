@@ -17,7 +17,7 @@ import java.util.List;
 public class KetQuaXuLyController {
     private final IKetQuaXuLyService ketQuaXuLyService;
     @GetMapping("/chi-tiet-phan-cong/{maChiTietPhanCong}")
-    public ApiSuccessResponse<List<KetQuaXuLySummaryResponse>> getByChiTietPhanCong(
+    public ApiSuccessResponse<List<KetQuaXuLyDetailResponse>> getByChiTietPhanCong(
             @PathVariable String maChiTietPhanCong) {
         return ApiSuccessResponse.ok(ketQuaXuLyService.findByChiTietPhanCong(maChiTietPhanCong));
     }

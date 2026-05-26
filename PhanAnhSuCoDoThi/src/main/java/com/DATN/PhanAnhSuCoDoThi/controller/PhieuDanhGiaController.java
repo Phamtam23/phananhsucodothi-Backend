@@ -3,6 +3,7 @@ package com.DATN.PhanAnhSuCoDoThi.controller;
 import com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuDanhGiaRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuDanhGiaResponse;
+import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuDanhGiaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,14 @@ public class PhieuDanhGiaController {
     public ApiSuccessResponse<PhieuDanhGiaResponse> create(
             @Valid @RequestBody PhieuDanhGiaRequest request
     ) {
-
+        String maNguoiDan = SecurityUtils.getCurrentRefMa();
         return ApiSuccessResponse.created(
-                phieuDanhGiaService.create(request)
+                phieuDanhGiaService.create(request,maNguoiDan)
         );
     }
 
     @GetMapping("/ket-qua-xu-ly/{maKetQuaXuLy}")
-    public ApiSuccessResponse<List<PhieuDanhGiaResponse>> findByKetQuaXuLy(
+    public ApiSuccessResponse<PhieuDanhGiaResponse> findByKetQuaXuLy(
             @PathVariable String maKetQuaXuLy
     ) {
 

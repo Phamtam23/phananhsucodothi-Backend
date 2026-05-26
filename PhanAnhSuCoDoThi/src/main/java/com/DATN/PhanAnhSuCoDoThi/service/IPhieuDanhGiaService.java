@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface IPhieuDanhGiaService {
 
-    PhieuDanhGiaResponse create (PhieuDanhGiaRequest phieuDanhGiaRequest);
+    PhieuDanhGiaResponse create (PhieuDanhGiaRequest phieuDanhGiaRequest, String maNguoiDan);
 
-   List<PhieuDanhGiaResponse> findByKetQuaXuLy(String maKetQuaXyLy);
+  PhieuDanhGiaResponse findByKetQuaXuLy(String maKetQuaXyLy);
 
 }

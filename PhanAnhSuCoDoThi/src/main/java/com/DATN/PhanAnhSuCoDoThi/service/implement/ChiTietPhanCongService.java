@@ -28,6 +28,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 @RequiredArgsConstructor
 @org.springframework.transaction.annotation.Transactional
@@ -129,7 +131,7 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
             NhanVienDonViResponse nhanVienDonViResponse = nhanVienDonViMapper.toResponsePC(chiTietPhanCongEntity.getNhanVienXuLy());
             PhieuPhanCongResponse phieuPhanCongResponse = phieuPhanCongMapper.toResponse(chiTietPhanCongEntity.getPhieuPhanCong());
             return chiTietPhanCongMapper.toResponse(chiTietPhanCongEntity, phieuPhanCongResponse, nhanVienDonViResponse);
-        }).collect(java.util.stream.Collectors.toList());
+        }).collect(toList());
     }
 
 }

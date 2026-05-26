@@ -40,10 +40,8 @@ public class PhieuPhanCongMapper {
     }
 
 
-    public PhieuPhanCongSCResponse toResponse(
-            PhieuPhanCongEntity entity,
-            KetQuaXuLyDetailResponse ketQuaXuLy,
-            PhieuTrangThaiResponse trangThai
+    public PhieuPhanCongSCResponse toResponseSC(
+            PhieuPhanCongEntity entity
     ) {
 
         return PhieuPhanCongSCResponse.builder()
@@ -66,10 +64,6 @@ public class PhieuPhanCongMapper {
                                 )
                                 .build()
                 )
-
-                .ketQuaXuLyDetailResponse(ketQuaXuLy)
-                .phieuTrangThaiResponse(trangThai)
-
                 .build();
     }
 

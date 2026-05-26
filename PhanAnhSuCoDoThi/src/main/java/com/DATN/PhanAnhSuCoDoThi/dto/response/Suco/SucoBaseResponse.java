@@ -16,6 +16,8 @@ public class SucoBaseResponse {
     private String noiDung;
     private String tieuDe;
     private String diaDiem;
+    private Double kinhDo;
+    private Double viDo;
     private String trangThai;
     private Integer diemSpam;
     private String lyDoSpam;

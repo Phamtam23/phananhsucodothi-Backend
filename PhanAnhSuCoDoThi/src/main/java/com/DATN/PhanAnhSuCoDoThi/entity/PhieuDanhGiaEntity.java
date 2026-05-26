@@ -27,7 +27,6 @@ public class PhieuDanhGiaEntity {
     private NguoidanEntity nguoiDan;
 
     @Enumerated(EnumType.STRING)
-    @Size(max = 20)
     @Column(name = "mucDoHaiLong", length = 20)
     private MucDoDanhGia mucDoHaiLong;
 

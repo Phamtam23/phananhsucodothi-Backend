@@ -7,10 +7,10 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuMoLai.PhieuMoLaiResponse;
 import java.util.List;
 
 public interface IPhieuMoLai {
-    PhieuMoLaiResponse create(CreatePhieuMoLaiRequest phieuMoLaiRequest);
+    PhieuMoLaiResponse create(CreatePhieuMoLaiRequest phieuMoLaiRequest,String maNguoiDan);
     PhieuMoLaiResponse update(UpdatePhieuMoLai  updatePhieuMoLai);
     PhieuMoLaiResponse findById(String maPhieuMoLai);
-    List<PhieuMoLaiResponse> findAllByPhanCong(String maNguoiDan, String maPhanCong);
+    PhieuMoLaiResponse findAllByPhanCong(String maNguoiDan, String maPhanCong);
     com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse<PhieuMoLaiResponse> findAllByDonVi(String maDonVi, int page, int size);
     PhieuMoLaiResponse duyetPhieuMoLai(String maPhieuMoLai, boolean isApproved, String lyDoTuChoi);
 }

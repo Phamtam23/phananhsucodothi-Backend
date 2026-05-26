@@ -28,16 +28,14 @@ import java.util.stream.Collectors;
 public class PhieuPhanCongService implements IPhieuPhanCong {
 
     private final PhieuPhanCongRepository phieuPhanCongRepository;
-    private final KetQuaXuLyMapper ketQuaXuLyMapper;
     private final SucoRepository sucoRepository;
     private final DonViXuLyRepository donViXuLyRepository;
     private final NhanVienDieuPhoiRepository  nhanVienDieuPhoiRepository;
     private final PhieuPhanCongMapper phieuPhanCongMapper;
     private final TepSuCoRepository tepSuCoRepository;
-    private final KetQuaXuLyRepository ketQuaXuLyRepository;
-    private final TepKetQuaRepository tepKetQuaRepository;
     private final PhieuDanhGiaRepository phieuDanhGiaRepository;
-    private final PhieuMoLaiRepository phieuMoLaiRepository;
+    private final KetQuaXuLyService ketQuaXuLyService;
+    private final PhieuMoLaiRepository  phieuMoLaiRepository;
     @Override
     public List<PhieuPhanCongResponse> create(
             CreatePhieuPhanCongRequest request,
@@ -171,7 +169,6 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
             String maSuCo,
             String maNguoiDan
     ) {
-
         List<PhieuPhanCongEntity> phieuPhanCongs =
                 phieuPhanCongRepository.findAllBySuCo_MaSuCo(maSuCo);
 
@@ -179,139 +176,57 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
             return Collections.emptyList();
         }
 
-        List<String> maPhieus = phieuPhanCongs.stream()
+        List<String> maPhanCongs = phieuPhanCongs.stream()
                 .map(PhieuPhanCongEntity::getMaPhieuPhanCong)
                 .toList();
 
-        Map<String, KetQuaXuLyDetailResponse> ketQuaTheoPhieu =
-                getKetQuaTheoPhieu(phieuPhanCongs);
+        Set<String> daDanhGiaSet = phieuDanhGiaRepository
+                .findByPhanCongsAndNguoiDan(maPhanCongs, maNguoiDan)
+                .stream()
+                .map(pd -> pd.getKetQuaXuLy()
+                        .getChiTietPhanCong()
+                        .getPhieuPhanCong()
+                        .getMaPhieuPhanCong())
+                .collect(Collectors.toSet());
 
-        Set<String> daDanhGiaSet =
-                phieuDanhGiaRepository.findMaPhieuDaDanhGia(
-                        maNguoiDan,
-                        maPhieus
-                );
+        Set<String> daMoLaiSet = phieuMoLaiRepository
+                .findByPhanCongsAndNguoiDan(maPhanCongs, maNguoiDan)
+                .stream()
+                .map(pd -> pd.getKetQuaXuLy()
+                        .getChiTietPhanCong()
+                        .getPhieuPhanCong()
+                        .getMaPhieuPhanCong())
+                .collect(Collectors.toSet());
 
-        Set<String> daMoLaiSet =
-                phieuMoLaiRepository.findMaPhieuDaMoLai(
-                        maNguoiDan,
-                        maPhieus
-                );
+        Map<String, List<KetQuaXuLyDetailResponse>> ketQuaMap =
+                ketQuaXuLyService.findByPhanCong(maPhanCongs);
 
         return phieuPhanCongs.stream()
-                .map(p -> {
+                .map(pc -> {
+                    PhieuPhanCongSCResponse response = phieuPhanCongMapper.toResponseSC(pc);
+                    if (response == null) return null;
 
-                    String maPhieu = p.getMaPhieuPhanCong();
+                    String maPc = pc.getMaPhieuPhanCong();
+                    boolean daDanhGia = daDanhGiaSet.contains(maPc);
+                    boolean daMoLai = daMoLaiSet.contains(maPc);
+                    List<KetQuaXuLyDetailResponse> ketQuas =
+                            ketQuaMap.getOrDefault(maPc, Collections.emptyList());
 
-                    boolean laNguoiGui =
-                            p.getSuCo()
-                                    .getNguoiDan()
-                                    .getMaNguoiDan()
-                                    .equals(maNguoiDan);
+                    PhieuTrangThaiResponse trangThaiResponse = PhieuTrangThaiResponse.builder()
+                            .canDanhGia(!daDanhGia && !ketQuas.isEmpty())
+                            .daDanhGia(daDanhGia)
+                            .canMoLai(!daMoLai && !ketQuas.isEmpty())
+                            .daMoLai(daMoLai)
+                            .build();
 
-                    boolean coKetQua =
-                            ketQuaTheoPhieu.containsKey(maPhieu);
+                    response.setKetQuaXuLyDetailResponse(ketQuas);
+                    response.setPhieuTrangThaiResponse(trangThaiResponse);
 
-                    boolean daDanhGia =
-                            daDanhGiaSet.contains(maPhieu);
-
-                    boolean canDanhGia =
-                            laNguoiGui
-                                    && coKetQua
-                                    && !daDanhGia;
-
-                    boolean daMoLai =
-                            daMoLaiSet.contains(maPhieu);
-
-                    boolean canMoLai =
-                            laNguoiGui
-                                    && coKetQua
-                                    && !daMoLai;
-
-                    PhieuTrangThaiResponse trangThai =
-                            PhieuTrangThaiResponse.builder()
-                                    .canDanhGia(canDanhGia)
-                                    .daDanhGia(daDanhGia)
-                                    .canMoLai(canMoLai)
-                                    .daMoLai(daMoLai)
-                                    .build();
-
-                    return phieuPhanCongMapper.toResponse(
-                            p,
-                            ketQuaTheoPhieu.get(maPhieu),
-                            trangThai
-                    );
+                    return response;
                 })
-                .toList();
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
-    private Map<String, KetQuaXuLyDetailResponse> getKetQuaTheoPhieu(
-            List<PhieuPhanCongEntity> phieuPhanCongs
-    ) {
 
-        List<String> maPhieus = phieuPhanCongs.stream()
-                .map(PhieuPhanCongEntity::getMaPhieuPhanCong)
-                .toList();
-
-        List<KetQuaXuLyEntity> ketQuas =
-                ketQuaXuLyRepository.findByPhieuPhanCongIn(maPhieus);
-
-        if (ketQuas.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        Map<String, List<MediaResponse>> tepTheoKetQua =
-                getMediaTheoKetQua(ketQuas);
-
-        return ketQuas.stream()
-                .collect(Collectors.toMap(
-
-                        k -> k.getChiTietPhanCong()
-                                .getPhieuPhanCong()
-                                .getMaPhieuPhanCong(),
-
-                        k -> {
-
-                            KetQuaXuLyDetailResponse response =
-                                    ketQuaXuLyMapper.toDetailResponse(k);
-
-                            response.setMedias(
-                                    tepTheoKetQua.getOrDefault(
-                                            k.getMaKetQua(),
-                                            Collections.emptyList()
-                                    )
-                            );
-
-                            return response;
-                        },
-
-                        (a, b) -> a
-                ));
-    }
-
-    private Map<String, List<MediaResponse>> getMediaTheoKetQua(
-            List<KetQuaXuLyEntity> ketQuas
-    ) {
-
-        List<String> maKetQuas = ketQuas.stream()
-                .map(KetQuaXuLyEntity::getMaKetQua)
-                .toList();
-
-        List<TepKetQuaEntity> teps =
-                tepKetQuaRepository.findAllByKetQua_MaKetQuaIn(maKetQuas);
-
-        return teps.stream()
-                .collect(Collectors.groupingBy(
-                        t -> t.getKetQua().getMaKetQua(),
-
-                        Collectors.mapping(
-                                t -> MediaResponse.builder()
-                                        .url(t.getUrl())
-                                        .loai(t.getLoai())
-                                        .build(),
-
-                                Collectors.toList()
-                        )
-                ));
-    }
 }

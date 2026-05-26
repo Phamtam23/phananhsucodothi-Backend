@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ChiTietPhanCongRepository extends JpaRepository<ChiTietPhanCongEntity,String> {
 
@@ -14,5 +16,5 @@ public interface ChiTietPhanCongRepository extends JpaRepository<ChiTietPhanCong
             Pageable pageable
     );
 
-    java.util.List<ChiTietPhanCongEntity> findByPhieuPhanCong_MaPhieuPhanCong(String maPhieuPhanCong);
+    List<ChiTietPhanCongEntity> findByPhieuPhanCong_MaPhieuPhanCong(String maPhieuPhanCong);
 }
