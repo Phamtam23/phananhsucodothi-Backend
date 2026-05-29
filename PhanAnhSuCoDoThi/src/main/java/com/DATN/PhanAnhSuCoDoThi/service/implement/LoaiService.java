@@ -48,8 +48,8 @@ public class LoaiService implements ILoaiService {
 
     @Override
     public LoaiResponse update(
-            String tenLoai,
-            String maLoai
+            String maLoai,
+            String tenLoai
     ) {
 
         LoaiEntity entity =

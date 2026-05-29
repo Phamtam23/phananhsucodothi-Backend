@@ -3,12 +3,16 @@ package com.DATN.PhanAnhSuCoDoThi.controller;
 import com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.LoginRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.RegisterRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.UpdateProfileRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.AuthResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.ProfileResponse;
+import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IAuthService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -53,5 +57,24 @@ public class AuthController {
                         null
                 )
         );
+    }
+
+    @GetMapping("/profile")
+    public ApiSuccessResponse<ProfileResponse> getProfile(
+    )
+    {
+        String maTaiKhoan = SecurityUtils.getCurrentMaTaiKhoan();
+        ProfileResponse profile = authService.getProfile(maTaiKhoan);
+        return ApiSuccessResponse.success(200, "Lấy thông tin thành công", profile);
+    }
+
+    @PutMapping("/profile")
+    public ApiSuccessResponse<String> updateProfile(
+            @Valid @RequestBody UpdateProfileRequest request
+    )
+    {
+        String maTaiKhoan = SecurityUtils.getCurrentRefMa();
+        String string = authService.upDateProfile(request,maTaiKhoan);
+        return ApiSuccessResponse.success(200, "Cập nhật thành công", string);
     }
 }

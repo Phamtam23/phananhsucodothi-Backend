@@ -19,6 +19,7 @@ public class DonViXuLyMapper {
                 .sdt(donViXuLyEntity.getSdt())
                 .diaChi(donViXuLyEntity.getDiaChi())
                 .khuVuc(donViXuLyEntity.getKhuVuc())
+                .trangThai(donViXuLyEntity.getTrangThai())
                 .build();
     }
 

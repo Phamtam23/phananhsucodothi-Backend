@@ -1,13 +1,14 @@
 package com.DATN.PhanAnhSuCoDoThi.mapper;
 
-import com.DATN.PhanAnhSuCoDoThi.dto.response.DonViXuLySCResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.*;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLyDetailResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCResponse;
-import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuTrangThaiResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
+import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
+import com.DATN.PhanAnhSuCoDoThi.entity.TepSuCoEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -64,6 +65,32 @@ public class PhieuPhanCongMapper {
                                 )
                                 .build()
                 )
+                .build();
+    }
+
+    public PhieuPhanCongLSResponse toLSResponse(PhieuPhanCongEntity entity) {
+        SucoEntity suCo = entity.getSuCo();
+
+        String thumbnail = suCo.getTepSuCoList().stream()
+                .findFirst()
+                .map(TepSuCoEntity::getUrl)
+                .orElse(null);
+
+        List<String> danhSachLoai = suCo.getDanhSachLoai().stream()
+                .map(ppl -> ppl.getLoai().getTenLoaiSuCo())
+                .toList();
+
+        return PhieuPhanCongLSResponse.builder()
+                .maPhieuPhanCong(entity.getMaPhieuPhanCong())
+                .trangThai(entity.getTrangThai())
+                .thoiGianTao(entity.getThoiGianTao())
+                .ghiChu(entity.getGhiChu())
+                .lyDoTuChoi(entity.getLyDoTuChoi())
+                .maSuCo(suCo.getMaSuCo())
+                .tieuDe(suCo.getTieuDe())
+                .diaDiem(suCo.getDiaDiem())
+                .thumbnail(thumbnail)
+                .danhSachLoai(danhSachLoai)
                 .build();
     }
 

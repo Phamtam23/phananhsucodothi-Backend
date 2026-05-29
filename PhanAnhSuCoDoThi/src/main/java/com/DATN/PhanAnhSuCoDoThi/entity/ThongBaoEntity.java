@@ -30,6 +30,9 @@ public class ThongBaoEntity {
     @Column(name = "noiDung", columnDefinition = "TEXT")
     private String noiDung;
 
+    @Column(name = "thoiGianTao")
+    private java.time.LocalDateTime thoiGianTao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "maTaiKhoan")
     private TaikhoanEntity taiKhoan;

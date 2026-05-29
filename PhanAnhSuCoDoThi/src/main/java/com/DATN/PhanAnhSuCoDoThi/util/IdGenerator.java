@@ -71,6 +71,10 @@ public class IdGenerator {
         return  "PC" + getLast4(maSuCo) + getLast4(maDonVi);
     }
 
+
+    public static String generateMaNhanVienChucVu(String maNhanVien) {
+        return   getLast4(maNhanVien)  +generateRandom(6);
+    }
     public static String geMaChiTietPhanCong(String maPhieuPhanCong, String maTruongDonVi)
     {
         return getLast4(maTruongDonVi) + getLast4(maPhieuPhanCong) + generateRandom(2);

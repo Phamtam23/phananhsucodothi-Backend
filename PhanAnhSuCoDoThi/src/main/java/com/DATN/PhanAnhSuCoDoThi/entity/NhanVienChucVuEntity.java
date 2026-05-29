@@ -6,14 +6,6 @@
 
     import java.time.LocalDate;
 
-    /**
-     * NhanVienChucVu - Lịch sử chức vụ của nhân viên đơn vị
-     * Bảng: NHANVIEN_CHUCVU
-     * PK: maNhanVienChucVu VARCHAR(10)
-     * FK: nhanVien → NHANVIEN_DONVI
-     * FK: chucVu   → CHUCVU
-     * Một nhân viên có thể giữ nhiều chức vụ theo thời gian
-     */
     @Entity
     @Table(name = "NHANVIEN_CHUCVU")
     @Getter

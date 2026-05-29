@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -75,15 +76,10 @@ public class PhieuChiDaoServiceService implements IPhieuChiDaoService {
     }
 
     @Override
-    public Page<PhieuChiDaoResponse> findByChiTietPhanCong(String maChiTietPhanCong, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<PhieuChiDaoEntity> pageResult = phieuChiDaoRepository.findByChiTietPhanCong_MaChiTietPhanCongAndDeletedAtIsNull(
-                maChiTietPhanCong,
-                pageable);
-
-        Page<PhieuChiDaoResponse> mapper = pageResult.map(phieuChiDaoEntity ->  phieuChiDaoMapper.toResponse(phieuChiDaoEntity));
-
-        return mapper;
-
+    public List<PhieuChiDaoResponse> findByChiTietPhanCong(String maChiTietPhanCong) {
+        List<PhieuChiDaoEntity> chiDaoEntities = phieuChiDaoRepository.findByChiTietPhanCong_MaChiTietPhanCongAndDeletedAtIsNull(maChiTietPhanCong);
+        return chiDaoEntities.stream()
+                .map(phieuChiDaoMapper::toResponse)
+                .toList();
     }
 }

@@ -5,6 +5,8 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuChiDao.UpdateChiDaoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuChiDaoResponse;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface IPhieuChiDaoService {
 
     PhieuChiDaoResponse create (CreateChiDaoRequest createChiDaoRequest,String maTruongDonVi);
@@ -15,5 +17,5 @@ public interface IPhieuChiDaoService {
 
     PhieuChiDaoResponse findById (String maChiDao);
 
-    Page<PhieuChiDaoResponse> findByChiTietPhanCong (String maChiTietPhanCong , int page, int size);
+    List<PhieuChiDaoResponse> findByChiTietPhanCong(String maChiTietPhanCong) ;
 }

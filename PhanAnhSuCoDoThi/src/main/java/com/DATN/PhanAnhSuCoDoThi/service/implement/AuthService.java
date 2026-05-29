@@ -2,10 +2,10 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.LoginRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.RegisterRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Taikhoan.UpdateProfileRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.AuthResponse;
-import com.DATN.PhanAnhSuCoDoThi.entity.NguoidanEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.QuyenTruyCapEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.TaikhoanEntity;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.ProfileResponse;
+import com.DATN.PhanAnhSuCoDoThi.entity.*;
 import com.DATN.PhanAnhSuCoDoThi.mapper.AuthMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.*;
 import com.DATN.PhanAnhSuCoDoThi.security.JwtUtils;
@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -29,6 +31,7 @@ public class AuthService implements IAuthService {
     private final NguoidanRepository nguoidanRepository;
     private final NhanVienDieuPhoiRepository nhanVienDieuPhoiRepository;
     private final NhanVienDonViRepository nhanVienDonViRepository;
+    private final NhanVienChucVuRepsitory nhanVienChucVuRepsitory;
 
     @Override
     public AuthResponse register(RegisterRequest request) {
@@ -149,5 +152,85 @@ public class AuthService implements IAuthService {
         );
 
         return authMapper.toResponse(taikhoan, token, role);
+    }
+
+    @Override
+    public String upDateProfile(UpdateProfileRequest updateProfileRequest,String maTaiKhoan) {
+
+       TaikhoanEntity taiKhoan = taikhoanRepository.findById(maTaiKhoan).orElseThrow(() -> new RuntimeException("Không tìm thấy tài khoản"));
+        taiKhoan.setDiaChi(updateProfileRequest.getDiaChi());
+        taiKhoan.setEmail(updateProfileRequest.getEmail());
+        taiKhoan.setAnhDaiDien(updateProfileRequest.getAnhDaiDien());
+        taiKhoan.setHoTen(updateProfileRequest.getHoTen());
+
+        taikhoanRepository.save(taiKhoan);
+
+        return "Đã cập nhật thành công" ;
+
+    }
+
+    @Override
+    public ProfileResponse getProfile(String maTaiKhoan) {
+        // Tìm tài khoản
+        TaikhoanEntity taikhoan = taikhoanRepository.findById(maTaiKhoan)
+                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
+
+        // Lấy danh sách quyền
+        List<String> quyens = taikhoan.getQuyens() == null ? List.of() :
+                taikhoan.getQuyens().stream()
+                        .map(q -> q.getMaQuyen())
+                        .toList();
+
+        String refMa = null;
+        String role = null;
+        String chucVu = null;
+        LocalDate ngayBatDau = null;
+
+        ProfileResponse profileResponse = ProfileResponse.builder()
+
+                .maTaiKhoan(maTaiKhoan)
+                .hoTen(taikhoan.getHoTen())
+                .email(taikhoan.getEmail())
+                .anhDaiDien(taikhoan.getAnhDaiDien())
+                .diaChi(taikhoan.getDiaChi())
+                .build();
+        if (quyens.contains("R_Admin")) {
+            role = "R_Admin";
+
+        } else if (quyens.contains("R_TXULY") || quyens.contains("R_NVXULY")) {
+            role = quyens.contains("R_TXULY") ? "R_TXULY" : "R_NVXULY"; {
+
+            refMa = nhanVienDonViRepository
+                    .findByTaiKhoan_MaTaiKhoan(taikhoan.getMaTaiKhoan())
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy trưởng đơn vị"))
+                    .getMaNhanVien();
+
+                NhanVienChucVuEntity nhanVienChucVu = nhanVienChucVuRepsitory.findByNhanVien_MaNhanVienAndNgayKetThucIsNull(refMa)
+                        .orElseThrow(() -> new RuntimeException("Không tìm thấy chức vụ của nhân viên"));
+
+                chucVu = nhanVienChucVu.getChucVu().getTenChucVu();
+                ngayBatDau = nhanVienChucVu.getNgayBatDau();
+        }
+
+        } else if (quyens.contains("R_DIEUPHOI")) {
+
+            chucVu = "Nhân viên điều phối";
+            NhanVienDieuPhoiEntity nhanVienDieuPhoiEntity = nhanVienDieuPhoiRepository.findByTaiKhoan_MaTaiKhoan(maTaiKhoan)
+                    .orElseThrow(() -> new RuntimeException("Không tìm thấy được nhân viên"));
+
+            ngayBatDau =nhanVienDieuPhoiEntity.getNgayBatDau();
+
+
+        } else if (quyens.contains("R_USER")) {
+            chucVu = "Người dân";
+        } else {
+            throw new RuntimeException("Role không hợp lệ");
+        }
+        profileResponse.setChucVu(chucVu);
+        profileResponse.setNgayBatDau(ngayBatDau);
+
+
+
+        return profileResponse;
     }
 }

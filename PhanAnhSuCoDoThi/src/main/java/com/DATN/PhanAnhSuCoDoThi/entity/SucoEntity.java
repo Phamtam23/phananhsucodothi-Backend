@@ -8,6 +8,7 @@ import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "SUCO")
@@ -57,4 +58,10 @@ public class SucoEntity {
 
     @Column(name = "thoiGianTao")
     private LocalDateTime thoiGianTao;
+
+    @OneToMany(mappedBy = "suCo", fetch = FetchType.LAZY)
+    private List<PhieuPhanLoaiEntity> danhSachLoai;
+
+    @OneToMany(mappedBy = "suCo", fetch = FetchType.LAZY)
+    private List<TepSuCoEntity> tepSuCoList;
 }

@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiDonVi;
 import lombok.*;
 
 @Data
@@ -22,5 +23,5 @@ public class DonViXuLyResponse {
 
     private String email;
 
-    private String trangThai;
+    private TrangThaiDonVi trangThai;
 }

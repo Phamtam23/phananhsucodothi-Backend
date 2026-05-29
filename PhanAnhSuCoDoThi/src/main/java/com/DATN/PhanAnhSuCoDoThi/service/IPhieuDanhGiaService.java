@@ -11,6 +11,6 @@ public interface IPhieuDanhGiaService {
 
     PhieuDanhGiaResponse create (PhieuDanhGiaRequest phieuDanhGiaRequest, String maNguoiDan);
 
-  PhieuDanhGiaResponse findByKetQuaXuLy(String maKetQuaXyLy);
+    PhieuDanhGiaResponse findByKetQuaXuLy(String maKetQuaXyLy);
 
 }

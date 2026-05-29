@@ -16,5 +16,7 @@ public class PhieuKiemDuyetResponse {
     private TrangThaiKiemDuyet trangThai;
     private String  lyDoTuChoi;
     private LocalDateTime thoiGianTao;
-
+    private String tieuDe;
+    private String diaDiem;
+    private String thumbnail;
 }

@@ -2,6 +2,7 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.ChiTietPhanCong.CreateChiTietPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.ChiTietPhanCong.UpdateChiTietPhanCongRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongLSResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.NhanVienDonVi.NhanVienDonViResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
@@ -10,6 +11,7 @@ import com.DATN.PhanAnhSuCoDoThi.entity.ChiTietPhanCongEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDonViEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.mapper.ChiTietPhanCongMapper;
 import com.DATN.PhanAnhSuCoDoThi.mapper.NhanVienDonViMapper;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuPhanCongMapper;
@@ -25,6 +27,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -42,8 +45,11 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
     private final NhanVienDonViMapper nhanVienDonViMapper;
     private final PhieuPhanCongMapper  phieuPhanCongMapper;
     @Override
-    public PageResponse<ChiTietPhanCongResponse> FindAllByNhanVienXuLy(
+    public PageResponse<ChiTietPhanCongLSResponse> FindAllByNhanVienXuLy(
             String nhanVienXuLy,
+            String keyword,
+            LocalDate tuNgay,
+            LocalDate denNgay,
             int page,
             int size
     ) {
@@ -56,16 +62,19 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
 
         Page<ChiTietPhanCongEntity> pageResult =
                 chiTietPhanCongRepository
-                        .findByNhanVienXuLy_MaNhanVien(
+                        .findAllByFilter(
                                 nhanVienXuLy,
+                                keyword,
+                                tuNgay,
+                                denNgay,
                                 pageable
                         );
 
-        Page<ChiTietPhanCongResponse> responsePage = pageResult.map(entity -> {
+        Page<ChiTietPhanCongLSResponse> responsePage = pageResult.map(entity -> {
 
             NhanVienDonViResponse nv = nhanVienDonViMapper.toResponsePC(entity.getNhanVienXuLy());
             PhieuPhanCongResponse ppc = phieuPhanCongMapper.toResponse(entity.getPhieuPhanCong());
-            return chiTietPhanCongMapper.toResponse(entity, ppc, nv);
+            return chiTietPhanCongMapper.toLSResponse(entity, ppc, nv);
         });
 
         return PageResponse.of(responsePage);
@@ -97,11 +106,15 @@ public class ChiTietPhanCongService implements IChiTietPhanCongService {
 
         ChiTietPhanCongEntity chiTietPhanCongEntity  = new ChiTietPhanCongEntity();
         chiTietPhanCongEntity.setMaChiTietPhanCong(IdGenerator.geMaChiTietPhanCong(createChiTietPhanCongRequest.getMaPhieuPhanCong(), maTruongDonVi));
-        chiTietPhanCongEntity.setTrangThai(TrangThaiChiTietPhanCong.DANG_CHO);
+        chiTietPhanCongEntity.setTrangThai(TrangThaiChiTietPhanCong.DANG_XU_LY);
         chiTietPhanCongEntity.setThoiGianTao(LocalDateTime.now());
         chiTietPhanCongEntity.setPhieuPhanCong(phieuPhanCongEntity);
         chiTietPhanCongEntity.setNhanVienXuLy(nhanVienDonViEntity);
         chiTietPhanCongRepository.save(chiTietPhanCongEntity);
+
+        phieuPhanCongEntity.setTrangThai(TrangThaiPhanCong.DANG_XU_LY);
+        phieuPhanCongRepository.save(phieuPhanCongEntity);
+
 
         NhanVienDonViResponse nhanVienDonViResponse = nhanVienDonViMapper.toResponsePC(chiTietPhanCongEntity.getNhanVienXuLy());
 

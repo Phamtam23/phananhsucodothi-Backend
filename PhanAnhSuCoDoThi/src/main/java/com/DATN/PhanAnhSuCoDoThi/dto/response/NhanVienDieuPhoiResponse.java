@@ -17,7 +17,7 @@ public class NhanVienDieuPhoiResponse {
 
     private String trangThai;
 
-    private LocalDateTime ngayBatDau;
+    private LocalDate ngayBatDau;
 
     private LocalDate ngaySinh;
 

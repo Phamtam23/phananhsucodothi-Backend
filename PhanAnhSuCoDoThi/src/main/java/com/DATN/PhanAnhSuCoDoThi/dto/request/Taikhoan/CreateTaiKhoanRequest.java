@@ -36,4 +36,6 @@ public class CreateTaiKhoanRequest {
     // vaiTro: R_USER, R_NVXULY, R_TXULY, R_DIEUPHOI, R_Admin
     @NotBlank
     private String vaiTro;
+
+    private String maDonVi;
 }

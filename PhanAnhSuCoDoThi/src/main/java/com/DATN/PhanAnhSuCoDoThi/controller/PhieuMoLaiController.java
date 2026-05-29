@@ -1,7 +1,9 @@
 package com.DATN.PhanAnhSuCoDoThi.controller;
 
+import com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuMoLai.CreatePhieuMoLaiRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuMoLai.UpdatePhieuMoLai;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuMoLai.PhieuMoLaiResponse;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuMoLai;
@@ -21,68 +23,65 @@ public class PhieuMoLaiController {
     private final com.DATN.PhanAnhSuCoDoThi.repository.NhanVienDonViRepository nhanVienDonViRepository;
 
     @PostMapping
-    public ResponseEntity<PhieuMoLaiResponse> create(
+    public com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse<PhieuMoLaiResponse> create(
             @RequestBody CreatePhieuMoLaiRequest request
     ) {
         String maNguoiDan = SecurityUtils.getCurrentRefMa();
-        return ResponseEntity.ok(
+        return com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse.ok(
                 phieuMoLaiService.create(request,maNguoiDan)
         );
     }
 
-    // Cập nhật phiếu mở lại
     @PutMapping
-    public ResponseEntity<PhieuMoLaiResponse> update(
+    public ApiSuccessResponse<PhieuMoLaiResponse> update(
             @RequestBody UpdatePhieuMoLai request
     ) {
-        return ResponseEntity.ok(
+        return ApiSuccessResponse.ok(
                 phieuMoLaiService.update(request)
         );
     }
 
-    // Lấy chi tiết phiếu mở lại
     @GetMapping("/{maPhieuMoLai}")
-    public ResponseEntity<PhieuMoLaiResponse> findById(
-            @PathVariable String maPhieuMoLai
+    public ApiSuccessResponse<PhieuMoLaiResponse> findById(
+            @PathVariable("maPhieuMoLai") String maPhieuMoLai
     ) {
-        return ResponseEntity.ok(
+        return ApiSuccessResponse.ok(
                 phieuMoLaiService.findById(maPhieuMoLai)
         );
     }
 
-    // Lấy danh sách phiếu mở lại theo chi tiết phân công
-    @GetMapping("/phan-cong/{phanCong}")
-    public ResponseEntity<PhieuMoLaiResponse> findAllByPhanCong(
-            @PathVariable String maChiTietPhanCong
+    @GetMapping("/phan-cong/{maChiTietPhanCong}")
+    public ApiSuccessResponse<PhieuMoLaiResponse> findByPhanCong(
+            @PathVariable("maChiTietPhanCong") String maChiTietPhanCong
     ) {
         String maNguoiDan = SecurityUtils.getCurrentRefMa();
-        return ResponseEntity.ok(
+        return ApiSuccessResponse.ok(
                 phieuMoLaiService.findAllByPhanCong(maNguoiDan,maChiTietPhanCong)
         );
     }
 
     @GetMapping("/don-vi")
-    public com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse<com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse<PhieuMoLaiResponse>> getByDonVi(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+    public ApiSuccessResponse<PageResponse<PhieuMoLaiResponse>> getByDonVi(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         String maNhanVien = SecurityUtils.getCurrentRefMa();
         String maDonVi = nhanVienDonViRepository.findById(maNhanVien)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy thông tin nhân viên đơn vị"))
                 .getDonVi().getMaDonViXuLy();
 
-        return com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse.ok(
+        return ApiSuccessResponse.ok(
                 phieuMoLaiService.findAllByDonVi(maDonVi, page, size)
         );
     }
 
     @PutMapping("/duyet/{maPhieuMoLai}")
-    public com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse<PhieuMoLaiResponse> duyetPhieuMoLai(
-            @PathVariable String maPhieuMoLai,
-            @RequestParam boolean isApproved,
-            @RequestParam(required = false) String lyDoTuChoi
+    public ApiSuccessResponse<PhieuMoLaiResponse> duyetPhieuMoLai(
+            @PathVariable("maPhieuMoLai") String maPhieuMoLai,
+            @RequestParam("isApproved") boolean isApproved,
+            @RequestParam(value = "lyDoTuChoi", required = false) String lyDoTuChoi
     ) {
-        return com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse.ok(
+        return ApiSuccessResponse.ok(
                 phieuMoLaiService.duyetPhieuMoLai(maPhieuMoLai, isApproved, lyDoTuChoi)
         );
     }

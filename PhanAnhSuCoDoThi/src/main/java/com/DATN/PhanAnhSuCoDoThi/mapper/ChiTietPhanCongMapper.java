@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.mapper;
 
+import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongLSResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.ChiTietPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.NhanVienDonVi.NhanVienDonViResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
@@ -17,6 +18,19 @@ public class ChiTietPhanCongMapper {
                 .nhanVienXuLy(nhanVienDonViResponse)
                 .trangThai(chiTietPhanCongEntity.getTrangThai())
                 .thoiGianTao(chiTietPhanCongEntity.getThoiGianTao())
+                .build();
+    }
+
+    public ChiTietPhanCongLSResponse toLSResponse(ChiTietPhanCongEntity chiTietPhanCongEntity, PhieuPhanCongResponse phieuPhanCongResponse, NhanVienDonViResponse nhanVienDonViResponse) {
+
+        return ChiTietPhanCongLSResponse.builder()
+                .maChiTietPhanCong(chiTietPhanCongEntity.getMaChiTietPhanCong())
+                .phieuPhanCong(phieuPhanCongResponse)
+                .nhanVienXuLy(nhanVienDonViResponse)
+                .trangThai(chiTietPhanCongEntity.getTrangThai())
+                .thoiGianTao(chiTietPhanCongEntity.getThoiGianTao())
+                .tieuDe(chiTietPhanCongEntity.getPhieuPhanCong().getSuCo().getTieuDe())
+                .diaDiem(chiTietPhanCongEntity.getPhieuPhanCong().getSuCo().getDiaDiem())
                 .build();
     }
 }

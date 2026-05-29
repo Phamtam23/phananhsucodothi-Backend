@@ -18,8 +18,7 @@ public class PhieuMoLaiResponse {
     TrangThaiMoLai trangThaiMoLai;
     String maKetQuaXuLy;
     private LocalDateTime thoiGianTao;
-    
-    // Bổ sung các trường mới
+
     private String lyDoTuChoi;
     private String maSuCo;
     private String noiDungSuCo;

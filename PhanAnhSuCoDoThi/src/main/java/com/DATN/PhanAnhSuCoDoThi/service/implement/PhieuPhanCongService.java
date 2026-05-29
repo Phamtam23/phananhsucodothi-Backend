@@ -2,6 +2,7 @@ package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.CreatePhieuPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.UpdatePhieuPhanCongRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCongFilterRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.*;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLyDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.*;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,6 +84,7 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
                                     .donViXuLy(donViXuLyEntity)
                                     .nhanVienDieuPhoi(nhanVienDieuPhoiEntity)
                                     .trangThai(TrangThaiPhanCong.CHO_XAC_NHAN)
+                                    .thoiGianTao(LocalDateTime.now())
                                     .build();
 
                     return phieuPhanCongRepository.save(
@@ -226,6 +230,29 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<PhieuPhanCongLSResponse> findAllByNhanVien(
+            String maNhanVien,
+            PhieuPhanCongFilterRequest request
+    ) {
+        Pageable pageable = PageRequest.of(
+                request.getPage(),
+                request.getSize(),
+                Sort.by("thoiGianTao").descending()
+        );
+
+        Page<PhieuPhanCongEntity> pageResult = phieuPhanCongRepository.findAllByFilter(
+                maNhanVien,
+                request.getTuNgay(),
+                request.getDenNgay(),
+                request.getMaDonVi(),
+                request.getMaLoai(),
+                pageable
+        );
+
+        return PageResponse.of(pageResult.map(phieuPhanCongMapper::toLSResponse));
     }
 
 

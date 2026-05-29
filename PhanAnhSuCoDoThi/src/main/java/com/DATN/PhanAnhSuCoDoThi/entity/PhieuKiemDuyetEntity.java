@@ -7,17 +7,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * PhieuKiemDuyet - Phiếu kiểm duyệt sự cố bởi nhân viên điều phối
- * Bảng: PHIEUKIEMDUYET
- * PK: maKiemDuyet VARCHAR(10)
- * FK: suCo              → SUCO
- * FK: nhanVienDieuPhoi  → NHANVIENDIEUPHOI
- *
- * Mỗi sự cố có 1 phiếu kiểm duyệt. Nhân viên điều phối xem xét:
- *  - Nếu hợp lệ → tạo PHIEUPHANCONG
- *  - Nếu không hợp lệ → ghi lyDoTuChoi, đóng sự cố
- */
 @Entity
 @Table(name = "PHIEUKIEMDUYET")
 @Getter

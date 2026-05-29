@@ -1,6 +1,7 @@
 package com.DATN.PhanAnhSuCoDoThi.service.implement;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuKiemDuyet.CreatePhieuKiemDuyetRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuKiemDuyetResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.NhanVienDieuPhoiEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.PhieuKiemDuyetEntity;
@@ -15,9 +16,15 @@ import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuKiemDuyetService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -69,6 +76,25 @@ public class PhieuKiemDuyetService implements IPhieuKiemDuyetService {
                 .stream()
                 .map(phieuKiemDuyetMapper::toResponse)
                 .toList();
+    }
+
+    @Override
+    public PageResponse<PhieuKiemDuyetResponse> getByNhanVien(
+            String maNhanVien, int page, int size,
+            LocalDate tuNgay, LocalDate denNgay
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("thoiGianTao").descending());
+
+        Page<PhieuKiemDuyetEntity> pageResult = phieuKiemDuyetRepository
+                .findAllByFilter(maNhanVien, tuNgay, denNgay, pageable);
+
+        return PageResponse.of(pageResult.map(pkt -> {
+            PhieuKiemDuyetResponse response = phieuKiemDuyetMapper.toResponse(pkt);
+            if (response == null) return null;
+            response.setTieuDe(pkt.getSuCo().getTieuDe());
+            response.setDiaDiem(pkt.getSuCo().getDiaDiem());
+            return response;
+        }));
     }
 
 }

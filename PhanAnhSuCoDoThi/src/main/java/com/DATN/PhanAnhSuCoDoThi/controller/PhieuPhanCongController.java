@@ -3,7 +3,9 @@ package com.DATN.PhanAnhSuCoDoThi.controller;
 import com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.CreatePhieuPhanCongRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCong.UpdatePhieuPhanCongRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.PhieuPhanCongFilterRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongLSResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PhieuPhanCongSCResponse;
 import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
@@ -75,6 +77,16 @@ public class PhieuPhanCongController {
         String maNguoiDan = SecurityUtils.getCurrentRefMa();
         return ApiSuccessResponse.ok(
                 phieuPhanCongService.findAllBySuCo(maSuCo,maNguoiDan)
+        );
+    }
+
+    @GetMapping("/nhan-vien")
+    public ApiSuccessResponse<PageResponse<PhieuPhanCongLSResponse>> findAllByNhanVien(
+            @ModelAttribute PhieuPhanCongFilterRequest request
+    ) {
+        String maNhanVien = SecurityUtils.getCurrentRefMa();
+        return ApiSuccessResponse.ok(
+                phieuPhanCongService.findAllByNhanVien(maNhanVien, request)
         );
     }
 }

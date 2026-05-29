@@ -8,13 +8,6 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * NhanVienDieuPhoi - Nhân viên điều phối (TTDVC)
- * Vai trò: tiếp nhận, kiểm duyệt sự cố, tạo phiếu phân công
- * Bảng: NHANVIENDIEUPHOI
- * PK: maNhanVienDieuPhoi VARCHAR(10)
- * FK: taiKhoan → TAIKHOAN (1-1)
- */
 @Entity
 @Table(name = "NHANVIENDIEUPHOI")
 @Getter
@@ -34,7 +27,7 @@ public class NhanVienDieuPhoiEntity {
     private String trangThai;
 
     @Column(name = "ngayBatDau")
-    private LocalDateTime ngayBatDau;
+    private LocalDate ngayBatDau;
 
     @Column(name = "ngaySinh")
     private LocalDate ngaySinh;
