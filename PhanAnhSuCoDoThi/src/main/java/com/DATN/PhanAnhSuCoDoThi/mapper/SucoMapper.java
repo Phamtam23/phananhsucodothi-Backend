@@ -1,21 +1,26 @@
 package com.DATN.PhanAnhSuCoDoThi.mapper;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.response.MediaResponse;
+import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoSummaryResponse;
+import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanLoaiEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.SucoEntity;
 import com.DATN.PhanAnhSuCoDoThi.entity.TepSuCoEntity;
+import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanLoaiRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.TepSuCoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 public class SucoMapper {
-    private final NhanVienMapper nhanVienMapper;
-    private final DonViXuLyMapper donViXuLyMapper;
+
     public SucoSummaryResponse toSummary(SucoEntity e, List<TepSuCoEntity> medias, List<String> loaiSuCos) {
         if (e == null) return null;
 
@@ -24,6 +29,7 @@ public class SucoMapper {
                 .tieuDe(e.getTieuDe())
                 .noiDung(e.getNoiDung())
                 .diaDiem(e.getDiaDiem())
+                .doUuTien(e.getDoUuTien())
                 .kinhDo(e.getKinhDo())
                 .viDo(e.getViDo())
                 .diemSpam(e.getDiemSpam())
@@ -48,9 +54,9 @@ public class SucoMapper {
                 .diaDiem(e.getDiaDiem())
                 .trangThai(e.getTrangThai() != null ? e.getTrangThai().name() : null)
                 .thoiGianTao(e.getThoiGianTao())
-
                 .maNguoiDan(e.getNguoiDan() != null ? e.getNguoiDan().getMaNguoiDan() : null)
                 .kinhDo(e.getKinhDo())
+                .tieuDe(e.getTieuDe())
                 .viDo(e.getViDo())
                 .ngayDuKienHoanThanh(e.getNgayDuKienHoanThanh())
                 .loaiSuCos(loaiSuCos)
@@ -65,6 +71,8 @@ public class SucoMapper {
 
         return medias.get(0).getUrl();
     }
+
+
 
     private static List<MediaResponse> mapMedia(List<TepSuCoEntity> medias) {
         if (medias == null) return null;

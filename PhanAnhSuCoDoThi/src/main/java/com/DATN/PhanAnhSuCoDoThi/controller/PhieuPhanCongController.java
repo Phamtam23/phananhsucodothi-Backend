@@ -28,10 +28,9 @@ public class PhieuPhanCongController {
     public ApiSuccessResponse<List<PhieuPhanCongResponse>> create(
             @RequestBody CreatePhieuPhanCongRequest request
     ) {
-        String maNhanVien = SecurityUtils.getCurrentRefMa();
 
         return ApiSuccessResponse.created(
-                phieuPhanCongService.create(request, maNhanVien)
+                phieuPhanCongService.create(request)
         );
     }
 

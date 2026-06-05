@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.entity;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.DoUuTien;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -55,6 +56,10 @@ public class SucoEntity {
 
     @Column(name = "laSpam")
     private Boolean laSpam;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "doUuTien", length = 20)
+    private DoUuTien doUuTien;
 
     @Column(name = "thoiGianTao")
     private LocalDateTime thoiGianTao;

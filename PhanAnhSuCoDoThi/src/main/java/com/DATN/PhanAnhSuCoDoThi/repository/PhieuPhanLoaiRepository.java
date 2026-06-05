@@ -16,4 +16,6 @@ public interface PhieuPhanLoaiRepository extends JpaRepository<PhieuPhanLoaiEnti
 
     boolean existsByMaSuCoAndMaLoaiSuCo(String maSuCo, String maLoaiSuCo);
 
+    List<PhieuPhanLoaiEntity> findBySuCo_MaSuCoIn(List<String> maSuCos);
+
 }

@@ -45,4 +45,12 @@ public class DonViXuLyController {
     ) {
         return  ApiSuccessResponse.ok(donViXuLyService.update(maDonVi, request));
     }
+
+    @DeleteMapping("/{maDonVi}")
+    public ApiSuccessResponse<Void> delete(
+            @PathVariable String maDonVi
+    ) {
+        donViXuLyService.delete(maDonVi);
+        return ApiSuccessResponse.deleted();
+    }
 }

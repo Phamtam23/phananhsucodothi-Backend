@@ -4,16 +4,13 @@ import com.DATN.PhanAnhSuCoDoThi.dto.request.KetQuaXuLy.CreateKetQuaXuLyRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.KetQuaXuLy.UpdateKetQuaXuLyRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLyDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.KetQuaXuLy.KetQuaXuLySummaryResponse;
-import com.DATN.PhanAnhSuCoDoThi.entity.ChiTietPhanCongEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.KetQuaXuLyEntity;
-import com.DATN.PhanAnhSuCoDoThi.entity.PhieuPhanCongEntity;
+import com.DATN.PhanAnhSuCoDoThi.entity.*;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiChiTietPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiKetQua;
 import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiPhanCong;
+import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 import com.DATN.PhanAnhSuCoDoThi.mapper.KetQuaXuLyMapper;
-import com.DATN.PhanAnhSuCoDoThi.repository.ChiTietPhanCongRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.KetQuaXuLyRepository;
-import com.DATN.PhanAnhSuCoDoThi.repository.PhieuPhanCongRepository;
+import com.DATN.PhanAnhSuCoDoThi.repository.*;
 import com.DATN.PhanAnhSuCoDoThi.service.IKetQuaXuLyService;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import com.DATN.PhanAnhSuCoDoThi.entity.TepKetQuaEntity;
-import com.DATN.PhanAnhSuCoDoThi.repository.TepKetQuaRepository;
+
 import com.DATN.PhanAnhSuCoDoThi.dto.response.MediaResponse;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +37,7 @@ public class KetQuaXuLyService implements IKetQuaXuLyService {
     private final PhieuPhanCongRepository phieuPhanCongRepository;
     private final TepKetQuaRepository tepKetQuaRepository;
     private final TepKetQuaService tepKetQuaService;
+    private final SucoRepository sucoRepository;
     @Override
     @Transactional(readOnly = true)
     public List<KetQuaXuLyDetailResponse> findByChiTietPhanCong(
@@ -259,6 +256,9 @@ public class KetQuaXuLyService implements IKetQuaXuLyService {
             entity.setTrangThai(TrangThaiKetQua.DA_DUYET);
             chiTietPhanCongEntity.setTrangThai(TrangThaiChiTietPhanCong.HOAN_THANH);
             phieuPhanCongEntity.setTrangThai(TrangThaiPhanCong.HOAN_THANH);
+            SucoEntity sucoEntity = entity.getChiTietPhanCong().getPhieuPhanCong().getSuCo();
+            sucoEntity.setTrangThai(TrangThaiSuCo.DA_XU_LY);
+            sucoRepository.save(sucoEntity);
         } else {
             entity.setTrangThai(TrangThaiKetQua.TU_CHOI);
             entity.setLyDoTuChoi(lyDoTuChoi);

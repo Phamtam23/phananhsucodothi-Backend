@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface IPhieuPhanCong {
 
-    List<PhieuPhanCongResponse> create(CreatePhieuPhanCongRequest createPhieuPhanCongRequest, String maNhanVienDieuPhoi);
+    List<PhieuPhanCongResponse> create(CreatePhieuPhanCongRequest createPhieuPhanCongRequest);
 
     PhieuPhanCongResponse update(String maPhieuPhanCong,UpdatePhieuPhanCongRequest updatePhieuPhanCongRequest);
 

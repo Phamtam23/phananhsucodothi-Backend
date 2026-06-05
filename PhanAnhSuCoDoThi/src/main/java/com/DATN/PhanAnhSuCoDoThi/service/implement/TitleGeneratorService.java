@@ -10,10 +10,24 @@ import java.util.Map;
 @Service
 public class TitleGeneratorService {
 
-    @Autowired
-    private GeminiService geminiService;
-
     private static final Map<String, String> KEYWORD_MAP = new LinkedHashMap<>() {{
+
+        // ========== CÂY XANH CÔNG CỘNG ==========
+        put("cây ngã đổ", "Cây ngã đổ nguy hiểm");
+        put("cây bị ngã", "Cây ngã đổ nguy hiểm");
+        put("cây bật gốc", "Cây bật gốc nguy hiểm");
+        put("cây đổ", "Cây đổ nguy hiểm");
+        put("cành cây gãy", "Cành cây gãy nguy hiểm");
+        put("cành cây", "Cành cây nguy hiểm");
+        put("cây khô chết", "Cây khô chết nguy hiểm");
+        put("cây chết", "Cây chết khô nguy hiểm");
+        put("cây mục", "Cây mục nguy hiểm");
+        put("gốc cây trồi", "Gốc cây trồi hư hỏng vỉa hè");
+        put("gốc cây", "Gốc cây hư hỏng vỉa hè");
+        put("cây nghiêng", "Cây nghiêng nguy hiểm");
+        put("cây ngã", "Cây ngã đổ nguy hiểm");
+        put("cây", "Sự cố cây xanh công cộng");
+        put("cây xanh", "Sự cố cây xanh công cộng");
         // ========== ĐIỆN ==========
         put("chập điện", "Chập điện nguy hiểm");
         put("mất điện", "Mất điện");
@@ -144,21 +158,7 @@ public class TitleGeneratorService {
         put("cọc tiêu", "Hư hỏng cọc tiêu");
         put("tường hộ lan", "Hư hỏng tường hộ lan");
 
-        // ========== CÂY XANH CÔNG CỘNG ==========
-        put("cây ngã đổ", "Cây ngã đổ nguy hiểm");
-        put("cây bị ngã", "Cây ngã đổ nguy hiểm");
-        put("cây bật gốc", "Cây bật gốc nguy hiểm");
-        put("cây đổ", "Cây đổ nguy hiểm");
-        put("cành cây gãy", "Cành cây gãy nguy hiểm");
-        put("cành cây", "Cành cây nguy hiểm");
-        put("cây khô chết", "Cây khô chết nguy hiểm");
-        put("cây chết", "Cây chết khô nguy hiểm");
-        put("cây mục", "Cây mục nguy hiểm");
-        put("gốc cây trồi", "Gốc cây trồi hư hỏng vỉa hè");
-        put("gốc cây", "Gốc cây hư hỏng vỉa hè");
-        put("cây nghiêng", "Cây nghiêng nguy hiểm");
-        put("cây ngã", "Cây ngã đổ nguy hiểm");
-        put("cây", "Sự cố cây xanh công cộng");
+
 
         // ========== CÔNG TRÌNH HẠ TẦNG ==========
         put("nứt tường", "Nứt tường công trình");
@@ -222,20 +222,42 @@ public class TitleGeneratorService {
     }};
 
     public String generateTitle(String noiDung, String diaDiem) {
+        noiDung = noiDung.toLowerCase();
         String ruleTitle = matchKeyword(noiDung, diaDiem);
+
         if (ruleTitle != null) {
             return ruleTitle;
         }
-        return geminiService.generateTitle(noiDung, diaDiem);
+        if (noiDung != null && !noiDung.isBlank()) {
+            String[] words = noiDung.trim().split("\\s+");
+            int limit = Math.min(8, words.length);
+            StringBuilder sb = new StringBuilder("Sự cố: ");
+            for (int i = 0; i < limit; i++) {
+                sb.append(words[i]).append(" ");
+            }
+            if (words.length > 8) sb.append("...");
+            if (diaDiem != null && !diaDiem.isBlank()) {
+                sb.append("tại ").append(diaDiem);
+            }
+            return sb.toString().trim();
+        }
+        return "Sự cố hạ tầng đô thị";
     }
 
     private String matchKeyword(String noiDung, String diaDiem) {
+        if (noiDung == null || noiDung.isBlank()) return null;
+
         String lower = noiDung.toLowerCase();
+        String locationSuffix = (diaDiem != null && !diaDiem.isBlank())
+                ? " tại " + diaDiem
+                : "";
+
         for (Map.Entry<String, String> entry : KEYWORD_MAP.entrySet()) {
             if (lower.contains(entry.getKey())) {
-                return entry.getValue() + " tại " + diaDiem;
+                return entry.getValue() + locationSuffix;
             }
         }
         return null;
     }
+
 }

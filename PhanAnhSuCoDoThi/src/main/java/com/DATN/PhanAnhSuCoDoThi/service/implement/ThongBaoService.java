@@ -5,6 +5,7 @@ import com.DATN.PhanAnhSuCoDoThi.dto.response.ThongBaoResponse;
 import com.DATN.PhanAnhSuCoDoThi.entity.ThongBaoEntity;
 import com.DATN.PhanAnhSuCoDoThi.repository.ThongBaoRepository;
 import com.DATN.PhanAnhSuCoDoThi.service.IThongBaoService;
+import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -54,5 +56,17 @@ public class ThongBaoService implements IThongBaoService {
                 thongBaoRepository.save(entity);
             }
         }
+    }
+
+    public void create(String maTaiKhoan,String noiDung,String tieuDe)
+    {
+        ThongBaoEntity entity = new ThongBaoEntity();
+        entity.setMaThongBao(IdGenerator.genMaThongBao(maTaiKhoan));
+        entity.setNoiDung(noiDung);
+        entity.setDaDoc(false);
+        entity.setTieuDe(tieuDe);
+        entity.setThoiGianTao(LocalDateTime.now());
+
+        thongBaoRepository.save(entity);
     }
 }

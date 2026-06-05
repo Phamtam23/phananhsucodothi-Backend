@@ -8,14 +8,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-/**
- * NhatKy - Nhật ký hành động trong hệ thống
- * Bảng: NHATKY
- * PK: maNhatKy VARCHAR(10)
- * FK: suCo     → SUCO
- * FK: taiKhoan → TAIKHOAN (ai thực hiện hành động)
- * Ghi lại mọi hành động: tiếp nhận, phân loại, phân công, xử lý...
- */
 @Entity
 @Table(name = "NHATKY")
 @Getter

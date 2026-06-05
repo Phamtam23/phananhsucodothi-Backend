@@ -1,5 +1,6 @@
 package com.DATN.PhanAnhSuCoDoThi.dto.response.Suco;
 
+import com.DATN.PhanAnhSuCoDoThi.enums.DoUuTien;
 import jakarta.persistence.Column;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -19,6 +20,7 @@ public class SucoBaseResponse {
     private Double kinhDo;
     private Double viDo;
     private String trangThai;
+    private DoUuTien doUuTien;
     private Integer diemSpam;
     private String lyDoSpam;
     private List<String> loaiSuCos;

@@ -111,4 +111,15 @@ public class IdGenerator {
         return "DV"
                 + generateRandom(8);
     }
+
+    public static String genMaThongBao(String maTaiKhoan)
+    {
+        return  getLast4(maTaiKhoan) + generateRandom(6);
+    }
+
+
+    public static String genMaNhatKy(String maTaiKhoan)
+    {
+        return  getLast4(maTaiKhoan) + generateRandom(6);
+    }
 }

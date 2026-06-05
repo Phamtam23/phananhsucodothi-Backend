@@ -2,6 +2,8 @@ package com.DATN.PhanAnhSuCoDoThi.controller;
 
 import com.DATN.PhanAnhSuCoDoThi.dto.ApiSuccessResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.request.Suco.CreateSucoRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Suco.SuCoFilterRequest;
+import com.DATN.PhanAnhSuCoDoThi.dto.request.Suco.UpdateSucoRequest;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.PageResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoDetailResponse;
 import com.DATN.PhanAnhSuCoDoThi.dto.response.Suco.SucoSummaryResponse;
@@ -18,14 +20,23 @@ public class SucoController {
 
     private final ISucoService sucoService;
 
-    @GetMapping
+    @PostMapping("/all")
     public ApiSuccessResponse<PageResponse<SucoSummaryResponse>> getAll(
+            @RequestBody SuCoFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ApiSuccessResponse.ok(sucoService.findAll(page,size));
+        return ApiSuccessResponse.ok(sucoService.findAll(filter, page, size));
     }
-
+     @GetMapping("/ban-do")
+    public ApiSuccessResponse<PageResponse<SucoSummaryResponse>> getByBanDo(
+            @RequestParam(required = false) String maLoai,
+            @RequestParam(required = false) TrangThaiSuCo trangThai,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiSuccessResponse.ok(sucoService.findForMap(maLoai, trangThai, page, size));
+    }
     @GetMapping("/{ma}")
     public ApiSuccessResponse<SucoDetailResponse> getById(@PathVariable String ma) {
         String maNguoiDan = SecurityUtils.getCurrentRefMa();
@@ -38,23 +49,21 @@ public class SucoController {
         return ApiSuccessResponse.created(sucoService.create(request, maNguoiDan));
     }
 
-    @GetMapping("/nguoi-dan")
+    @PutMapping
+    public ApiSuccessResponse<SucoDetailResponse> update(@RequestBody UpdateSucoRequest request) {
+        String maNguoiDan = SecurityUtils.getCurrentRefMa();
+        return ApiSuccessResponse.created(sucoService.update(request,maNguoiDan));
+    }
+
+    @PostMapping("/nguoi-dan")
     public ApiSuccessResponse<PageResponse<SucoSummaryResponse>> getAllByNguoiDan(
+            @RequestBody SuCoFilterRequest filter,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size )
         {
             String maNguoiDan = SecurityUtils.getCurrentRefMa();
-            return ApiSuccessResponse.ok(sucoService.findByNguoiDan(maNguoiDan,page,size));
+            return ApiSuccessResponse.ok(sucoService.findByNguoiDan(maNguoiDan,filter,page,size));
         }
 
-    @GetMapping("/trang-thai/{trangThaiSuCo}")
-    public ApiSuccessResponse<PageResponse<SucoSummaryResponse>> getByTrangThai(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @PathVariable TrangThaiSuCo trangThaiSuCo
-    ) {
-        return ApiSuccessResponse.ok(
-                sucoService.findByTrangThai(page, size, trangThaiSuCo)
-        );
-    }
+
 }

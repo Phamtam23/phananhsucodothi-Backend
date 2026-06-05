@@ -11,6 +11,7 @@ import com.DATN.PhanAnhSuCoDoThi.enums.TrangThaiSuCo;
 import com.DATN.PhanAnhSuCoDoThi.mapper.KetQuaXuLyMapper;
 import com.DATN.PhanAnhSuCoDoThi.mapper.PhieuPhanCongMapper;
 import com.DATN.PhanAnhSuCoDoThi.repository.*;
+import com.DATN.PhanAnhSuCoDoThi.security.SecurityUtils;
 import com.DATN.PhanAnhSuCoDoThi.service.IPhieuPhanCong;
 import com.DATN.PhanAnhSuCoDoThi.util.IdGenerator;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @org.springframework.transaction.annotation.Transactional
 public class PhieuPhanCongService implements IPhieuPhanCong {
-
     private final PhieuPhanCongRepository phieuPhanCongRepository;
     private final SucoRepository sucoRepository;
     private final DonViXuLyRepository donViXuLyRepository;
@@ -39,11 +39,15 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
     private final PhieuDanhGiaRepository phieuDanhGiaRepository;
     private final KetQuaXuLyService ketQuaXuLyService;
     private final PhieuMoLaiRepository  phieuMoLaiRepository;
+    private final NhanVienChucVuRepsitory nhanVienChucVuRepsitory;
+    private final ThongBaoService thongBaoService;
+    private final NhatKySerivce nhatKySerivce;
+
     @Override
     public List<PhieuPhanCongResponse> create(
-            CreatePhieuPhanCongRequest request,
-            String maNhanVienDieuPhoi
+            CreatePhieuPhanCongRequest request
     ) {
+        String maNhanVienDieuPhoi = SecurityUtils.getCurrentRefMa();
 
         SucoEntity sucoEntity = sucoRepository
                 .findById(request.getMaSuCo())
@@ -59,39 +63,26 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
                         .orElseThrow(() ->
                                 new RuntimeException("Không tìm thấy nhân viên điều phối"));
 
-        return request.getMaDonViXuLy()
-                .stream()
-                .map(maDonVi -> {
 
-                    DonViXuLyEntity donViXuLyEntity =
-                            donViXuLyRepository
-                                    .findById(maDonVi)
-                                    .orElseThrow(() ->
-                                            new RuntimeException(
-                                                    "Không tìm thấy đơn vị xử lý: " + maDonVi
-                                            ));
+        List<DonViXuLyEntity> donVis =
+                donViXuLyRepository.findAllByMaDonViXuLyIn(
+                        request.getMaDonViXuLy()
+                );
 
-                    String maPhieuPhanCong =
-                            IdGenerator.generateMaPhieuPhanCong(
-                                    request.getMaSuCo(),
-                                    maDonVi
-                            );
+        guiThongBaoPhanCong(sucoEntity,request.getMaDonViXuLy());
+        ghiNhatKyPhanCong(sucoEntity,nhanVienDieuPhoiEntity);
 
-                    PhieuPhanCongEntity phieuPhanCongEntity =
-                            PhieuPhanCongEntity.builder()
-                                    .maPhieuPhanCong(maPhieuPhanCong)
-                                    .suCo(sucoEntity)
-                                    .donViXuLy(donViXuLyEntity)
-                                    .nhanVienDieuPhoi(nhanVienDieuPhoiEntity)
-                                    .trangThai(TrangThaiPhanCong.CHO_XAC_NHAN)
-                                    .thoiGianTao(LocalDateTime.now())
-                                    .build();
+        List<PhieuPhanCongEntity> phieuPhanCongs =
+                donVis.stream()
+                        .map(donVi ->
+                                taoPhieuPhanCong(
+                                        donVi,
+                                        sucoEntity,
+                                        nhanVienDieuPhoiEntity
+                                ))
+                        .toList();
 
-                    return phieuPhanCongRepository.save(
-                            phieuPhanCongEntity
-                    );
-
-                })
+        return phieuPhanCongs.stream()
                 .map(phieuPhanCongMapper::toResponse)
                 .toList();
     }
@@ -256,4 +247,72 @@ public class PhieuPhanCongService implements IPhieuPhanCong {
     }
 
 
+
+        private void guiThongBaoPhanCong(
+                SucoEntity suCo,
+                List<String> maDonViXuLy
+        ) {
+
+            for (String maDonVi : maDonViXuLy) {
+
+                NhanVienChucVuEntity truongDonVi =
+                        nhanVienChucVuRepsitory
+                                .findFirstByNhanVien_DonVi_MaDonViXuLyAndChucVu_MaChucVuAndNgayKetThucIsNull(
+                                        maDonVi,"C_TDVXL000"
+
+                                )
+                                .orElseThrow(() ->
+                                        new RuntimeException(
+                                                "Đơn vị chưa có trưởng đơn vị"
+                                        ));
+
+                thongBaoService.create(
+                        truongDonVi.getNhanVien()
+                                .getTaiKhoan()
+                                .getMaTaiKhoan(),
+
+                        "Đơn vị của bạn được phân công xử lý sự cố: "
+                                + suCo.getTieuDe(),
+
+                        "Phân công xử lý sự cố"
+                );
+            }
+        }
+    private void ghiNhatKyPhanCong(
+            SucoEntity suCo,
+            NhanVienDieuPhoiEntity nhanVienDieuPhoi
+    ) {
+
+        nhatKySerivce.create(
+                suCo,
+                TrangThaiSuCo.DANG_XU_LY,
+                nhanVienDieuPhoi.getTaiKhoan()
+        );
+    }
+
+
+    private PhieuPhanCongEntity taoPhieuPhanCong(
+            DonViXuLyEntity donVi,
+            SucoEntity suCo,
+            NhanVienDieuPhoiEntity nhanVienDieuPhoi
+    ) {
+
+        PhieuPhanCongEntity phieuPhanCong = PhieuPhanCongEntity.builder()
+                .maPhieuPhanCong(
+                        IdGenerator.generateMaPhieuPhanCong(
+                                suCo.getMaSuCo(),
+                                donVi.getMaDonViXuLy()
+                        )
+                )
+                .suCo(suCo)
+                .donViXuLy(donVi)
+                .nhanVienDieuPhoi(nhanVienDieuPhoi)
+                .trangThai(TrangThaiPhanCong.CHO_XAC_NHAN)
+                .thoiGianTao(LocalDateTime.now())
+                .build();
+
+        phieuPhanCongRepository.save(phieuPhanCong);
+
+        return phieuPhanCong;
+    }
 }

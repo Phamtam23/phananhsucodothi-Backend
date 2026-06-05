@@ -14,21 +14,21 @@ import java.time.LocalDateTime;
 public class PhieuPhanLoaiEntity {
 
     @Id
-    @Column(name = "`maSuCo`", length = 10, nullable = false)
+    @Column(name = "maSuCo", length = 10, nullable = false)
     private String maSuCo;
 
     @Id
-    @Column(name = "`maLoaiSuCo`", length = 10, nullable = false)
+    @Column(name = "maLoaiSuCo", length = 10, nullable = false)
     private String maLoaiSuCo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "`maSuCo`", insertable = false, updatable = false)
+    @JoinColumn(name = "maSuCo", insertable = false, updatable = false)
     private SucoEntity suCo;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "`maLoaiSuCo`", insertable = false, updatable = false)
+    @JoinColumn(name = "maLoaiSuCo", insertable = false, updatable = false)
     private LoaiEntity loai;
 
-    @Column(name = "`thoiGianTao`")
+    @Column(name = "thoiGianTao")
     private LocalDateTime thoiGianTao;
 }

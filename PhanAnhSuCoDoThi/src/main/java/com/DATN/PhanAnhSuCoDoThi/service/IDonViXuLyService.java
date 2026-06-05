@@ -16,4 +16,5 @@ public interface IDonViXuLyService {
 
     List<DonViXuLyResponse> findAll();
 
+    Void delete(String maDonVi);
 }

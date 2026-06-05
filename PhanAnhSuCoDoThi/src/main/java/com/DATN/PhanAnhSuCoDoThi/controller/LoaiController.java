@@ -37,16 +37,16 @@ public class LoaiController {
         return ApiSuccessResponse.ok(loaiService.update(maLoai, tenLoai));
     }
 
-//    @DeleteMapping("/{maLoai}")
-//    public ApiSuccessResponse<Void> delete(
-//            @PathVariable
-//            String maLoai
-//    ) {
-//
-//        loaiService.delete(maLoai);
-//
-//        return ApiSuccessResponse.ok()
-//    }
+    @DeleteMapping("/{maLoai}")
+    public ApiSuccessResponse<Void> delete(
+            @PathVariable
+            String maLoai
+    ) {
+
+        loaiService.delete(maLoai);
+
+        return ApiSuccessResponse.deleted();
+    }
 
     @GetMapping("/{maLoai}")
     public ApiSuccessResponse<LoaiResponse> findById(

@@ -76,4 +76,12 @@ public class DonViXuLyService implements IDonViXuLyService {
                 .map(donViXuLyMapper::toResponse)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public Void delete(String maDonVi) {
+        DonViXuLyEntity entity = donViXuLyRepository.findById(maDonVi)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy đơn vị xử lý"));
+        donViXuLyRepository.delete(entity);
+        return null;
+    }
 }

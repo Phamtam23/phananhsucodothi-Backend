@@ -16,7 +16,7 @@ public class GeminiService {
                 .apiKey(apiKey)
                 .build();
 
-        String prompt = "Tạo tiêu đề ngắn gọn, chuyên nghiệp cho sự cố đô thị. Chỉ trả về tiêu đề.\nNội dung: %s\nĐịa điểm: %s"
+        String prompt = "Tạo tiêu đề ngắn gọn, chuyên nghiệp cho sự cố đô thị. Chỉ trả về tiêu đề.\nNội dung: %s\nĐịa điểm: %s.Tôi muốn kết quả cuối cùng là tiêu đề rồi bạn không cần đưa ra lựa chọn đâu."
                 .formatted(noiDung, diaDiem);
 
         GenerateContentResponse response =
